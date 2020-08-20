@@ -1,7 +1,7 @@
 // Lic:
 // Headers/ArgParse.h
 // Argurment parser
-// version: 20.08.19
+// version: 20.08.20
 // Copyright (C) 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
