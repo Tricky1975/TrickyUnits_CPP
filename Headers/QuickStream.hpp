@@ -28,6 +28,7 @@ namespace TrickyUnits {
 	bool FileExists(char* file);
 	bool FileExists(string file);
 	string LoadString(string file);
+	void SaveString(string file, string stringvalue);
 	
 }
 #endif
