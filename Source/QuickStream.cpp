@@ -30,9 +30,10 @@
 #include <vector>
 #include <iostream>
 
-// My own headers
+// Tricky's Units
 #include "../Headers/QuickString.hpp"
 #include "../Headers/QuickStream.hpp"
+
 
 namespace TrickyUnits {
 	using namespace std;
