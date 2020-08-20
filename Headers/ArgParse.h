@@ -26,9 +26,11 @@
 #include <string>
 #include <map>
 
-using namespace std;
+
 
 namespace TrickyUnits {
+	
+	using namespace std;
 
 	typedef struct  {
 		string myexe;
