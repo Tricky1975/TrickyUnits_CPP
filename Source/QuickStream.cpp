@@ -23,13 +23,16 @@
 #define _CRT_SECURE_NO_DEPRECATE
 #endif
 
+// Base C/C++ stuff
 #include <stdio.h>
 #include <string>
 #include <fstream>
 #include <vector>
-
-#include <QuickString.h>
 #include <iostream>
+
+// My own headers
+#include "../Headers/QuickString.hpp"
+#include "../Headers/QuickStream.hpp"
 
 namespace TrickyUnits {
 	using namespace std;
@@ -55,11 +58,18 @@ namespace TrickyUnits {
 	}
 
 	string LoadString(string file) {
-		std::ifstream ifs("myfile.txt");
+		std::ifstream ifs(file);
 		std::string content((std::istreambuf_iterator<char>(ifs)),
 			(std::istreambuf_iterator<char>()));
+		// cout << "LOADED FROM FILE: " << file << "\n" << content << "\END\n";
 		return content;
 	}
+
+	void SaveString(string file, string stringvalue) {
+		std::ofstream out(file);
+		out << stringvalue;
+		out.close();
+}
 
 	vector<string> LoadLines(string file){
 		return StringToLines(LoadString (file));
