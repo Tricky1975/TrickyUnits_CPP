@@ -22,9 +22,10 @@
 #include <string>
 
 
-using namespace std;
+
 
 namespace TrickyUnits {
+	using namespace std;
 	bool FileExists(char* file);
 	bool FileExists(string file);
 	string LoadString(string file);
