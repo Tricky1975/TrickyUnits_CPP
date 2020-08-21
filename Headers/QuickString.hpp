@@ -27,6 +27,7 @@
 
 
 #include <vector>
+#include <string>
 
 
 namespace TrickyUnits {
