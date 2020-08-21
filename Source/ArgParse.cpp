@@ -24,7 +24,7 @@
 #include <map>
 
 // Tricky's Units
-#include <QuickString.h>
+#include <QuickString.hpp>
 #include <ArgParse.h>
 
 using namespace std;
