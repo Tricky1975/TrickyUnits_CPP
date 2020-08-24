@@ -18,9 +18,13 @@
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
 #undef Test_EndianCheck
+
+#include "../Headers/CheckEndian.hpp"
+
 typedef union {
-  unsigned char b[4];
+  unsigned char b[8];
   int i;
+  _int32 i32;
 } ucheck;
 
 namespace TrickyUnits{
@@ -31,6 +35,32 @@ namespace TrickyUnits{
   }
 
   bool IsBigEndian() { return !IsLittleEndian();}
+
+  _int32 Reverse(_int32 i) {
+      ucheck iget;
+      ucheck iset; 
+      for (int j = 0; j < 8; j++) {
+          iget.b[j] = 0;
+          iset.b[j] = 0;
+      }
+      iget.i32 = i;
+      for (int j = 0; j < sizeof(_int32); ++j) iset.b[sizeof(_int32) - j] = iget.b[j];
+      return iset.i32;
+  }
+
+  _int32 ToLittleEndian(_int32 i) {
+      static bool TLE = IsLittleEndian();
+      if (TLE) return i; // System is already little endian, not need to switch this around!
+      return Reverse(i);
+  }
+
+  _int32 ToBigEndian(_int32 i) {
+      static bool TBE = IsBigEndian();
+      if (TBE) return i; // System is already little endian, not need to switch this around!
+      return Reverse(i);
+  }
+
+
 }
 
 
