@@ -1,7 +1,7 @@
 // Lic:
 // Source/QuickString.cpp
 // Quick String
-// version: 20.08.20
+// version: 20.08.29
 // Copyright (C) 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -164,5 +164,29 @@ namespace TrickyUnits {
         return ret;
     }
 
+    string bsdec(const char* str) {
+        string ret = "";
+        for (int i = 0; str[i]; i++) {
+            auto c = str[i];
+            if (c == ' ' || (c >= 'a' && c <= 'z') || (c >= '0' && c <= ':') || (c >= 'A' && c <= 'Z'))
+                ret += c;
+            else {
+                char fme[10];
+                sprintf_s(fme, 6, "\\%03d", c);
+                ret += fme;
+            }
+        }
+        return ret;
+    }
+    string bsdec(string str) { return bsdec(str.c_str()); }
+
+
+    string ExtractExt(std::string file){
+        file = TReplace(file, '\\', '/');
+        int lastdot = findlast(file, '.');
+        int lastslash = findlast(file, '/');
+        if (lastdot < 0 || lastdot < lastslash) return "";
+        return file.substr(lastdot + 1); //left(file, lastdot);
+    }
      
 }

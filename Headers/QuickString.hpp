@@ -44,6 +44,7 @@ namespace TrickyUnits {
 
 
 	std::string StripExt(std::string file);
+	std::string ExtractExt(std::string file);
 	int findlast(std::string str, char ch);
 	int findlast(std::string haystack, std::string needle);
 
@@ -78,5 +79,12 @@ namespace TrickyUnits {
 	/// <param name="str"></param>
 	/// <returns></returns>
 	std::string Upper(std::string str);
+
+
+	std::string bsdec(const char* str);
+	std::string bsdec(std::string str);
 }
+
+
+
 #endif
