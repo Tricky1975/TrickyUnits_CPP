@@ -1,7 +1,7 @@
 // Lic:
 // Source/QuickString.cpp
 // Quick String
-// version: 20.08.29
+// version: 20.09.01
 // Copyright (C) 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+// #include <iostream> 
 #include "../Headers/QuickString.hpp"
 
 using namespace std;
@@ -146,11 +147,23 @@ namespace TrickyUnits {
                 ret += str[i];
         }
         if (ret == "") return ""; // No need to go on if the string's empty now!
+        /*
         for (int i = str.size() - 1; i >= 0; --i) {
             if (str[i] != ' ' && str[i] != '\t' && str[i] != '\r' && str[i] != '\n') return ret;
             ret[i] = '\0';
         }
-        return ""; // Should never happen, but at least this prevents crashes, exceptions, whatever!
+        */
+        while (            
+            ret[ret.size() - 1] == ' ' ||
+            ret[ret.size() - 1] == '\t' ||
+            ret[ret.size() - 1] == '\n' ||
+            ret[ret.size() - 1] == '\t'
+            ) {
+            // cout << ret << " (" << ret.size() << ")\n";
+            ret = left(ret, ret.size() - 1);
+            if (ret == "") return "";
+        }
+        return ret; // Should never happen, but at least this prevents crashes, exceptions, whatever!
     }
 
     void Trans2Upper(string& str)
