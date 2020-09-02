@@ -23,6 +23,7 @@ namespace TrickyUnits{
         unsigned long long PeekUInt64(unsigned long long offs);
         void Create(unsigned long long bufsize);
         void Kill();
+        unsigned long long Size();
         ~TrBank();
     };
 }

@@ -138,6 +138,10 @@ namespace TrickyUnits {
         delete[] buf; size = 0; buf = 0; 
     }
 
+    unsigned long long TrBank::Size() {
+        return size;
+    }
+
     TrBank::~TrBank() {
         if (AutoKill && buf) Kill();
     }
