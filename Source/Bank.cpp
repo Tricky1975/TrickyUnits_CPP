@@ -168,4 +168,3 @@ namespace TrickyUnits {
         return 0;
     }
 #endif
-    
