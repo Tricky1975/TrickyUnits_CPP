@@ -43,6 +43,7 @@ namespace TrickyUnits {
 	bool suffixed(std::string str, std::string suffix);
 
 
+	std::string ExtractDir(std::string file);
 	std::string StripExt(std::string file);
 	std::string ExtractExt(std::string file);
 	int findlast(std::string str, char ch);
@@ -56,6 +57,7 @@ namespace TrickyUnits {
 	/// <returns>Position number (from 0) or -1 when non-existent</returns>
 	int findfirst(std::string str, char ch);
 	std::string TReplace(std::string mystr, char ori, char subst);
+	std::string TReplace(std::string mystr, std::string ori, std::string subst);
 	std::vector<std::string> Split(std::string str, char spltchar);
 	/// <summary>
 	/// Splits a std::string into lines. WARNING! Please note this routine is only compatible with Unix LF and Windows CRLF. Systems using only CR will just lead to on big std::string with all their new lines removed.

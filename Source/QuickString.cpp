@@ -103,6 +103,30 @@ namespace TrickyUnits {
         return mystr;
     }
 
+    std::string TReplace(std::string mystr, std::string ori, std::string subst) {
+        std::string ret ="";
+        auto olen = mystr.size();
+        auto slen = subst.size();
+        unsigned p = 1;
+        while (p + slen <= olen) {
+            if (mid(mystr, p, slen) == subst) {
+                ret += subst;
+                p += slen;
+            } else {
+                ret += mystr[p-1];
+                p++;
+            }
+        }
+        return ret;
+    }
+
+    std::string ExtractDir(std::string file) {
+        file = TReplace(file, '\\', '/');
+        int lastslash = findlast(file, '/');
+        if (lastslash < -1) return "";
+        return left(file, lastslash);        
+    }
+
     string StripExt(string file) {
         file = TReplace(file, '\\', '/');
         int lastdot = findlast(file, '.');
