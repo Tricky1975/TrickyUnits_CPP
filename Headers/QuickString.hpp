@@ -44,6 +44,7 @@ namespace TrickyUnits {
 
 
 	std::string ExtractDir(std::string file);
+	std::string StripDir(std::string file);
 	std::string StripExt(std::string file);
 	std::string ExtractExt(std::string file);
 	int findlast(std::string str, char ch);

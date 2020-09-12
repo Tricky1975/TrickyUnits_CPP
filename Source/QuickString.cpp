@@ -127,6 +127,13 @@ namespace TrickyUnits {
         return left(file, lastslash);        
     }
 
+    std::string StripDir(std::string file) {
+        file = TReplace(file, '\\', '/');
+        int lastslash = findlast(file, '/');
+        if (lastslash < -1) return file;
+        return right(file,file.size()-lastslash);
+    }
+
     string StripExt(string file) {
         file = TReplace(file, '\\', '/');
         int lastdot = findlast(file, '.');
