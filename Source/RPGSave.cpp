@@ -15,6 +15,7 @@ namespace TrickyUnits{
 			if (prefixed(scanentry.first, Upper(prefix) + "CHARACTER/")) {
 				auto TN = StripDir(ExtractDir(scanentry.second.Entry()));
 				auto TR = StripDir(scanentry.first);
+				if (!Character::Map.count(TN)) Character::CreateChar(TN);
 				if (false) {
 					// Char: Name
 					RCase("NAME")
