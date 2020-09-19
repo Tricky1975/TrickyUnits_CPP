@@ -64,18 +64,22 @@ namespace TrickyUnits {
 				ret.bool_flags.clear();
 				ret.string_flags.clear();
 				ret.int_flags.clear();
-
+				return ret;
 			}
 			else if (prefixed(a, "-")) {
 				string flag = right(a, a.size() - 1);
-				// TODO: Proper flag parsing will be there later!
-				_ParseArgReport = "Flag parsing not yet supported";
-				ret.arguments.clear();
-				ret.bool_flags.clear();
-				ret.string_flags.clear();
-				ret.int_flags.clear();
+				if (CFG.flagtype[flag] == "BOOL") {
+					ret.bool_flags[flag] = (CFG.defaultvalue[flag] == "FALSE");
+				} else {
+					// TODO: Proper flag parsing will be there later!
+					_ParseArgReport = "Flag parsing not yet supported";
+					ret.arguments.clear();
+					ret.bool_flags.clear();
+					ret.string_flags.clear();
+					ret.int_flags.clear();
+					return ret;
+				}
 
-				return ret;
 			}
 			else {
 				ret.arguments.push_back(a);
