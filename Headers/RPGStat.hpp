@@ -71,6 +71,7 @@ namespace TrickyUnits {
 		map<string, CharData*> MapData;
 		map<string, CharList*> MapList;
 		map<string, CharStat*> MapStat;
+		std::string CharTag;
 	public:
 		void NULLStat(string Tag);
 		void NULLList(string Tag);
@@ -104,10 +105,15 @@ namespace TrickyUnits {
 		vector<string> Lists();
 		vector<string> Points();
 
+		std::string StatList();
+
 		string Name;
 		static map <string, Character> Map;
 		static RPGPanic Panic;
+		static void CreateChar(std::string Tag);
 
+		Character();
+		Character(std::string Tag);
 		~Character();
 	};
 

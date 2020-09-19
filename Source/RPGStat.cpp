@@ -117,7 +117,13 @@ namespace TrickyUnits {
 	CharStat* Character::GetStat(string Stat, bool safe) { GetStuff(CharStat, MapStat, Stat); }
 	CharData* Character::GetData(string Data, bool safe) { GetStuff(CharData, MapData, Data); }
 	CharList* Character::GetList(string List, bool safe) { GetStuff(CharList, MapList, List); }
-	CharPoints* Character::GetPoints(string Pnts, bool safe) { GetStuff(CharPoints, MapPoints, Pnts); }
+	CharPoints* Character::GetPoints(string Pnts, bool safe) {
+		//GetStuff(CharPoints, MapPoints, Pnts); 
+		if (!MapPoints.count(Pnts)) { if (safe) MapPoints[Pnts] = new CharPoints(); else { Paniek("Call to non-existent MapPoints " + Pnts) NULL; } } 
+		MapPoints[Pnts]->MaxCopyUpdate(CharTag);
+		return MapPoints[Pnts];
+
+	}
 
 	vector<string> Character::Stats() {
 		RPGDataGather(MapStat);
@@ -135,6 +141,24 @@ namespace TrickyUnits {
 		RPGDataGather(MapPoints);
 	}
 
+	string Character::StatList() {
+		string ret = "";
+		for (auto s : MapStat) {
+			if (ret != "") ret += "\n";
+			ret += s.first + " = " + to_string(s.second->Value());
+		}
+		return ret;
+	}
+
+	void Character::CreateChar(std::string Tag) {
+		Map[Tag] = Character(Tag);
+	}
+
+	Character::Character() {
+		cout << "\x7WARNING! Character created without any tag\n";
+	}
+
+	Character::Character(std::string Tag) { CharTag = Tag; }
 	Character::~Character() {
 		// I must make sure that the destruction of a character nullifies all memory!
 		NULLEverything();
@@ -144,8 +168,10 @@ namespace TrickyUnits {
 
 
 	void CharPoints::MaxCopyUpdate(string chartag) {
+		// cout << maxcopy << " << MAXCOPY!\n";
 		if (maxcopy == "") return;
-		Character::Map[chartag].GetStat(maxcopy)->Value();
+		_maximum = Character::Map[chartag].GetStat(maxcopy)->Value();
+		// cout << "MAXCOPY:" << chartag << "." << maxcopy << " >> " << _maximum << "\n";
 	}
 
 	void CharPoints::Have(int v) { _have = max(min(v, _maximum), _minimum); }
@@ -163,7 +189,7 @@ namespace TrickyUnits {
 
 	int CharPoints::Have() { return _have; }
 	int CharPoints::Mini() { return _minimum; }
-	int CharPoints::Maxi() { MaxCopyUpdate(maxcopy); return _maximum; }
+	int CharPoints::Maxi() { return _maximum; }
 
 	void CharPoints::MaxCopy(string mc) {
 		maxcopy = mc;
@@ -192,6 +218,7 @@ namespace TrickyUnits {
 
 	void CharStat::Value(int v) {
 		if (_script != "") { Paniek("Value fixed by script, and cannot be changed!"); }
+		_value = v;
 	}
 
 	void CharStat::Script(string s) { _script = s; }
@@ -209,12 +236,12 @@ namespace TrickyUnits {
 	void Party::Member(int memnum, string setmem) {
 		if (memnum<1 || memnum>_max) { Paniek("Set Member Out Of Range"); }
 		if (!Character::Map.count(setmem)) { Paniek("Member " + setmem + " doesn't exist and can therefore also not be put in the party!"); }
-		_party[memnum - 1] = memnum;
+		_party[memnum - 1] = setmem;
 	}
 
 	string Party::Member(int memnum) {
 		if (memnum<1 || memnum>_max) { Paniek("Get Member Out Of Range") ""; }
-		return _party[memnum-1];
+		return _party[memnum - 1];
 	}
 
 	void Party::Max(int maxnum) {
