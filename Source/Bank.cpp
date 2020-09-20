@@ -1,7 +1,7 @@
 // Lic:
 // Source/Bank.cpp
 // Bank
-// version: 20.09.02
+// version: 20.09.20
 // Copyright (C) 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
