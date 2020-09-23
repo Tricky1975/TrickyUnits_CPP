@@ -26,7 +26,7 @@
 		auto Old = TheMap[Tag];\
 		TheMap.erase(Tag); \
 		for (auto& chars : Map) if (chars.second.TheMap[Tag] == Old) return; \
-		delete Old;
+		if (Old) delete Old;
 
 #define PerformAllNULL(TheMap) \
 		vector<string> Victims; \
