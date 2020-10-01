@@ -134,7 +134,17 @@ namespace TrickyUnits {
 	bool Character::HasPoints(string Pnts) { return MapData.count(Pnts); }
 
 	CharStat* Character::GetStat(string Stat, bool safe) { GetStuff(CharStat, MapStat, Stat); }
-	CharData* Character::GetData(string Data, bool safe) { GetStuff(CharData, MapData, Data); }
+	CharData* Character::GetData(string Data, bool safe) { 
+		//GetStuff(CharData, MapData, Data); 
+		if (!MapData.count(Data)) {
+			if (safe) {
+				MapData[Data] = new CharData();
+				cout << "Creating Character Data: " << Data << "!\n";
+			} else { Paniek("Call to non-existent MapData " + Data) NULL; }
+		}
+		if (!MapData[Data]) cout << "WARNING! MapData on key [" << Data << "] appears to be NULL! This may never be possible!\n";
+		return MapData[Data];
+	}
 	CharList* Character::GetList(string List, bool safe) { GetStuff(CharList, MapList, List); }
 	CharPoints* Character::GetPoints(string Pnts, bool safe) {
 		//GetStuff(CharPoints, MapPoints, Pnts); 
@@ -180,7 +190,8 @@ namespace TrickyUnits {
 	Character::Character(std::string Tag) { CharTag = Tag; }
 	Character::~Character() {
 		// I must make sure that the destruction of a character nullifies all memory!
-		NULLEverything();
+		//cout << "Character destruction! '"<<CharTag<<"' N:'"<<Name<<"'\n";
+		//NULLEverything();
 	}
 
 
@@ -195,6 +206,10 @@ namespace TrickyUnits {
 
 	void CharPoints::Have(int v) { _have = max(min(v, _maximum), _minimum); }
 
+	void CharPoints::ForceHave(int v) {
+		_have = v;
+	}
+
 	void CharPoints::Mini(int v) {
 		if (v > _maximum) { Paniek("Setting minimum higher than maximum"); }
 		_minimum = v;
@@ -204,6 +219,8 @@ namespace TrickyUnits {
 		if (v < _minimum && (!ignoremaxcopy)) { Paniek("Setting maximum lower than minimum"); }
 		_maximum = v;
 	}
+
+	void CharPoints::UnForce() { _have = max(min(_have, _maximum), _minimum); }
 
 
 	int CharPoints::Have() { return _have; }
@@ -252,9 +269,9 @@ namespace TrickyUnits {
 	int Party::_max = 0;
 	vector<string> Party::_party;
 	
-	void Party::Member(int memnum, string setmem) {
-		if (memnum<1 || memnum>_max) { Paniek("Set Member Out Of Range"); }
-		if (!Character::Map.count(setmem)) { Paniek("Member " + setmem + " doesn't exist and can therefore also not be put in the party!"); }
+	void Party::Member(int memnum, string setmem,bool dontcheckexistance) {
+		if (memnum<1 || memnum>_max) { Paniek("Set Member Out Of Range"); }		
+		if (!(Character::Map.count(setmem)||dontcheckexistance )) { Paniek("Member " + setmem + " doesn't exist and can therefore also not be put in the party!"); }
 		_party[memnum - 1] = setmem;
 	}
 

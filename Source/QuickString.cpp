@@ -23,6 +23,10 @@
 // #include <iostream> 
 #include "../Headers/QuickString.hpp"
 
+
+// 3rd party
+// #include "3rd_party/md5.hpp"
+
 using namespace std;
 
 namespace TrickyUnits {
@@ -104,20 +108,39 @@ namespace TrickyUnits {
     }
 
     std::string TReplace(std::string mystr, std::string ori, std::string subst) {
+        /* bugged
         std::string ret ="";
         auto olen = mystr.size();
-        auto slen = subst.size();
+        auto slen = ori.size();
         unsigned p = 1;
         while (p + slen <= olen) {
-            if (mid(mystr, p, slen) == subst) {
+            if (mid(mystr, p, slen) == ori) {
                 ret += subst;
-                p += slen;
+                p +=slen;
             } else {
                 ret += mystr[p-1];
                 p++;
             }
         }
         return ret;
+        */
+        //* Fixed?
+        std::string ret = "";
+        auto olen = mystr.size();
+        auto slen = ori.size();
+        unsigned p = 1;
+        while (p <= olen) {
+            if ((p - 1) + slen <= olen && mid(mystr, p, slen) == ori) {
+                ret += subst;
+                p += slen;
+                //cout << p << ":"<<olen<<endl;
+            } else {
+                ret += mystr[p - 1];
+                p++;
+            }
+        }
+        return ret;
+        //*/
     }
 
     std::string ExtractDir(std::string file) {
@@ -131,7 +154,9 @@ namespace TrickyUnits {
         file = TReplace(file, '\\', '/');
         int lastslash = findlast(file, '/');
         if (lastslash < -1) return file;
-        return right(file,file.size()-lastslash);
+        auto ret = right(file,file.size()-lastslash);
+        while (ret.size() && ret[0] == '/') ret = right(ret, ret.size() - 1);
+        return ret;
     }
 
     string StripExt(string file) {
@@ -223,6 +248,18 @@ namespace TrickyUnits {
         return ret;
     }
     string bsdec(string str) { return bsdec(str.c_str()); }
+
+    std::string hashmd5(std::string str) {
+        /* original
+            auto hash = ConstexprHashes::md5("jaklsdjlkad");
+            cout << hex;
+            for (auto i : hash) {
+                cout << (static_cast<int>(i) & 0xff);
+            }
+            cout << endl;
+        */
+        return "Not yet operational"; 
+    }
 
 
     string ExtractExt(std::string file){

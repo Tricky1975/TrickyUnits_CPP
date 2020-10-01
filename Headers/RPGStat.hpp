@@ -26,8 +26,10 @@ namespace TrickyUnits {
 	public:
 		void MaxCopyUpdate(string chartag);
 		void Have(int v);
+		void ForceHave(int v);
 		void Mini(int v);
 		void Maxi(int v,bool ignoremaxcopy=false);
+		void UnForce();
 		int Have();
 		int Mini();
 		int Maxi();
@@ -122,7 +124,7 @@ namespace TrickyUnits {
 		static vector<string> _party;
 		static int _max;
 	public:
-		static void Member(int memnum, string setmem);
+		static void Member(int memnum, string setmem, bool dontcheckexistance=false);
 		static string Member(int memnum);
 		static void Max(int maxnum);
 		static int Max();

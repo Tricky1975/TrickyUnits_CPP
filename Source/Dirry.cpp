@@ -21,6 +21,7 @@
 #include "..\Headers\QuickString.hpp"
 #include <map>
 #include <stdlib.h>
+#include <iostream>
 
 #define Dirry_VisualStudio
 using namespace std;
@@ -44,8 +45,8 @@ namespace TrickyUnits {
             char* you;
             // Those variable names are a notion to Microschoft!
             size_t bc = 200;
-            auto e1 = _dupenv_s(&fuck, &bc, "HOME");
-            auto e2 = _dupenv_s(&you, &bc, "HOME");
+            auto e1 = _dupenv_s(&fuck, &bc, "HOMEDRIVE");
+            auto e2 = _dupenv_s(&you, &bc, "HOMEPATH");
             if ((!e1) && (!e2) && fuck && you) {
                 string H = fuck; H += you;
                 DVar["HomeDrive"] = fuck;
@@ -68,9 +69,12 @@ namespace TrickyUnits {
 
     string Dirry(string path) {
         auto ret = path;
+        DirryInit();
         for (auto dostuff : DVar) {
+            cout << "Dirry debug: $" << dostuff.first << "$ = " << dostuff.second << endl;
             ret = TReplace(ret, "$" + dostuff.first + "$", dostuff.second);
         }
+        cout << "Dirry over!\n";
         return ret;
     }
 

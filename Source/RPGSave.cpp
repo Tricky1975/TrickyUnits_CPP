@@ -24,6 +24,8 @@
 #define LCase(a) } else if (linktype==a) {
 #define WriteByte(B,a) B->Write((unsigned char)a);
 
+#define Chat(a) cout << "\x1b[32mRPG-DEBUG> \x1b[0m"<<a<<endl
+
 namespace TrickyUnits{
 	using namespace jcr6;
 
@@ -31,9 +33,12 @@ namespace TrickyUnits{
 		// Clear mem
 		ResetRPG();
 		for (auto& scanentry : jcr->Entries()) {
+			Chat("Check entry: " + scanentry.first);
 			if (prefixed(scanentry.first, Upper(prefix) + "CHARACTER/")) {
+				Chat("Character Entry to load!");
 				auto TN = StripDir(ExtractDir(scanentry.second.Entry()));
 				auto TR = StripDir(scanentry.first);
+				Chat("Char: " + TN + "; DT: " + TR);
 				if (!Character::Map.count(TN)) Character::CreateChar(TN);
 				if (false) {
 					// Char: Name
@@ -73,32 +78,39 @@ namespace TrickyUnits{
 							break;
 						case 6:
 							sv->Script(BT.ReadString());
+							break;
 						default:
 							//EndGraphics
-							doRPGPanic("FATAL ERROR:\n\nUnknown tag in character (" + TN + "}) stat file (" + to_string(tag) + ") within this savegame file ");
+							doRPGPanic("FATAL ERROR:\n\nUnknown tag in character (" + TN + ") stat file (" + to_string(tag) + ") within this savegame file ");
 						}
 					}
 					// Char: Points
 					RCase("POINTS")
 						JT_EntryReader BT;
 					jcr->B(scanentry.first, BT);
+					CharPoints* sp = NULL;
 					while (!BT.eof()) {
 						auto tag = BT.ReadByte();
-						CharPoints* sp = NULL;
 						switch (tag) {
-						case 1:
+						case 1: {
 							/* original (now useless C# code)
 							sp = new RPGPoints();
 							TN = BT.ReadString();
 							RPG_TMap.MapInsert(ch.Points, TN, sp);
 							*/
-							sp = Character::Map[TN].GetPoints(BT.ReadString());
+							auto PN = BT.ReadString();
+							sp = Character::Map[TN].GetPoints(PN);
+							Chat("Points pointer set to: " + PN);
+						}
 							break;
-						case 2:
-							sp->MaxCopy(BT.ReadString());
+						case 2: {
+							auto fuck = BT.ReadString(); // For some reason C++ wants to crash on this (without apparent reason).
+							if (!sp) doRPGPanic("Tried to maxcopy a NULL pointer for points ("+TN+")");
+							sp->MaxCopy(fuck);
 							break;
+						}
 						case 3:
-							sp->Have(BT.ReadInt());
+							sp->ForceHave(BT.ReadInt());
 							break;
 						case 4:
 							sp->Maxi(BT.ReadInt());
@@ -111,6 +123,7 @@ namespace TrickyUnits{
 							doRPGPanic("FATAL ERROR:\n\nUnknown tag in character (" + TN + ") points file (" + to_string(tag) + ") within this savegame file ");
 						}
 					}
+					sp->UnForce();
 					// Char: Data
 					RCase("DATA")
 						auto data = jcr->StringMap(scanentry.first);
@@ -148,7 +161,7 @@ namespace TrickyUnits{
 			int p = 0;
 			Party::Max(PMAX);
 			while(!BT.eof()){
-				Party::Member(++p, BT.ReadString());
+				Party::Member(++p, BT.ReadString(),true);
 			}
 		}
 		// Links		
@@ -193,20 +206,30 @@ namespace TrickyUnits{
 		RPGLoad(&jcr, prefix);
 	}
 
+	static void SaveRPGLink(jcr6::JT_CreateBuf* BTE, std::string ltype, std::string ch1, std::string ch2, std::string stat) {
+		BTE->Write((char)1); //' marks new entry version 1
+		BTE->Write(ltype);
+		BTE->Write(ch1);
+		BTE->Write(ch2);
+		BTE->Write(stat);
+	}
+
+
+
 	void RPGSave(jcr6::JT_Create* jcr, std::string prefix, std::string Storage) {
 		auto BT{ jcr->StartEntry(prefix + "Party",Storage) };
 		BT->Write(Party::Max());
 		for (int i = 1; i <= Party::Max(); ++i) BT->Write(Party::Member(i));
 		delete BT; // Show close stuff.
-		for (auto &scanchar : Character::Map) {
+		for (auto& scanchar : Character::Map) {
 			// Name
 			auto ch = scanchar.first;
 			auto dt = &scanchar.second;
-			BT = jcr->StartEntry(prefix + ch+"/Name",Storage);
+			BT = jcr->StartEntry(prefix + "Character/" + ch + "/Name", Storage);
 			BT->Write(dt->Name);
 			delete BT;
 			// Stats
-			BT = jcr->StartEntry(prefix + ch + "/Stats",Storage);
+			BT = jcr->StartEntry(prefix + "CHARACTER/" + ch + "/Stats", Storage);
 			for (auto& key : dt->Stats()) {
 				auto st{ dt->GetStat(key) };
 				BT->Write((char)1);
@@ -224,7 +247,7 @@ namespace TrickyUnits{
 				BT->Write(st->Script());
 			}
 			delete BT;
-			BT = jcr->StartEntry(prefix + ch + "/Points", Storage);
+			BT = jcr->StartEntry(prefix + "CHARACTER/" + ch + "/Points", Storage);
 			for (auto& key : dt->Points()) {
 				auto pt = dt->GetPoints(key);
 				WriteByte(BT, 1);
@@ -239,13 +262,18 @@ namespace TrickyUnits{
 				BT->Write(pt->Mini());
 			}
 			delete BT;
-			//BT = jcr->StartEntry(prefix + ch + "/Data", Storage);
+			//BT = jcr->StartEntry(prefix + "CHARACTER/"+ch+ "/Data", Storage);
 			{
 				map<string, string>m;
-				for (auto& key : dt->Datas()) m[key] = dt->GetData(key)->Value;
-				jcr->AddStringMap(prefix + ch + "/Data", m, Storage);
+				auto dseq = dt->Datas();
+				for (auto& key : dseq) {
+					auto gd = dt->GetData(key);
+
+					m[key] = gd->Value;
+				}
+				jcr->AddStringMap(prefix + "CHARACTER/" + ch + "/StrData", m, Storage);
 			}
-			BT = jcr->StartEntry(prefix + ch + "/List");
+			BT = jcr->StartEntry(prefix + "CHARACTER/" + ch + "/Lists");
 			for (auto& key : dt->Lists()) {
 				WriteByte(BT, 1);
 				BT->Write(key);
@@ -254,7 +282,50 @@ namespace TrickyUnits{
 					BT->Write(item);
 				}
 			}
+			delete BT;
 		}
+		auto BTE = jcr->StartEntry(prefix + "Links"); //BT.NewEntry(D + "Links", JCRSTORAGE);
+		//var ch1=""
+		//var ch2 = "";
+		//var stat = "";
+		Character* och1=NULL;
+		Character* och2=NULL;
+		// C#: foreach(string ch1 in RPG_TMap.MapKeys(RPGChars)) foreach(string ch2 in RPG_TMap.MapKeys(RPGChars)) {
+		/* C++: */ for(auto itch1:Character::Map) for(auto itch2:Character::Map){
+			auto ch1 = itch1.first;
+			auto ch2 = itch2.first;
+			if (ch1 != ch2) {
+				// Debug.WriteLine($"Comparing {ch1} and {ch2}");
+				try {
+					och1 = &itch1.second; //(RPGCharacter)RPG_TMap.MapValueForKey(RPGChars, ch1);
+					och2 = &itch2.second; // (RPGCharacter)RPG_TMap.MapValueForKey(RPGChars, ch2);
+					//foreach(string stat in RPG_TMap.MapKeys(och1.Stats))
+					for (auto stat : och1->Stats())
+						if (och1->GetStat(stat) == och2->GetStat(stat)) SaveRPGLink(BTE, "Stat", ch1, ch2, stat);
+					//foreach(string stat in RPG_TMap.MapKeys(och1->StrData))
+					for (auto stat : och1->Datas())
+						if (och1->GetData(stat) == och2->GetData(stat)) SaveRPGLink(BTE, "Data", ch1, ch2, stat);
+					//foreach(string stat in RPG_TMap.MapKeys(och1->Points))
+					for (auto stat : och1->Points())
+						if (och1->GetPoints(stat) == och2->GetPoints(stat)) SaveRPGLink(BTE, "PNTS", ch1, ch2, stat);
+					//foreach(string stat in RPG_TMap.MapKeys(och1->Lists))
+					for (auto stat : och1->Lists())
+						if (och1->GetList(stat) == och2->GetList(stat)) SaveRPGLink(BTE, "LIST", ch1, ch2, stat);
+					//Debug.WriteLine("= All okay!");
+				//} catch (System.Exception Ex) {
+				} catch (const std::exception& e){
+					//Debug.WriteLine($"= Error occurred: {Ex.Message}!");
+					std::cout << "\x7 = Error occurred " << e.what() << endl;
+				}// finally {
+				//	Debug.WriteLine("= End of record");
+				//}
+			}
+		}
+		//Debug.WriteLine("Closing link file");
+		BTE->Write((unsigned char)255);
+		BTE->Close();
+		//Debug.WriteLine($"Offset {BT.Entries["XTRA / PARTY / LINKS"].Offset} / {BT.Entries["XTRA / PARTY / LINKS"].Size}"); // High debug, must be commented on normal use!
+		delete BTE;
 	}
 
 	void RPGSave(std::string mainfile, std::string prefix, std::string Storage) {

@@ -86,6 +86,7 @@ namespace TrickyUnits {
 
 	std::string bsdec(const char* str);
 	std::string bsdec(std::string str);
+	std::string hashmd5(std::string str);
 }
 
 
