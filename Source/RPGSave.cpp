@@ -1,7 +1,7 @@
 // Lic:
 // Source/RPGSave.cpp
 // RPGSave
-// version: 20.09.20
+// version: 20.10.06
 // Copyright (C) 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -125,13 +125,17 @@ namespace TrickyUnits{
 					}
 					sp->UnForce();
 					// Char: Data
-					RCase("DATA")
+					RCase("STRDATA")
+						//cout << "Scan data: " << scanentry.first << "\n";
 						auto data = jcr->StringMap(scanentry.first);
 						auto ch = &Character::Map[TN];
 						ch->NULLAllData(); // Once again make sure all data is destroyed, to prevent conflicts
-						for (auto it : data)ch->GetData(it.first)->Value = it.second;
-						// Char: List
-						RCase("LIST")
+						for (auto it : data) {
+							//cout << "Read Data: " << it.first << " => " << it.second << "\n";
+							ch->GetData(it.first)->Value = it.second;
+						}
+					// Char: List
+					RCase("LISTS")
 						JT_EntryReader BT;
 					jcr->B(scanentry.first, BT);
 					CharList* ls = NULL;
