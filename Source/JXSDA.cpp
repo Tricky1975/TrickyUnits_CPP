@@ -1,4 +1,3 @@
-#include "..\Headers\JXSDA.hpp"
 // Lic:
 // Source/JXSDA.cpp
 // JXSDA
@@ -21,6 +20,8 @@
 
 // Important NOTE!
 // This only works in a LITTLE ENDIAN environment!
+
+#undef JXSDA_ShowExitCode
 
 #include <iostream>
 #include <vector>
@@ -49,7 +50,10 @@ namespace TrickyUnits{
 
         bool EOB() { return pos >= siz; }
 
-        char RChar() {
+        char RChar() { 
+#ifdef JXSDA_ShowExitCode
+            if (EOB()) cout << "Past end of buffer> " << pos << "/" << siz << endl;
+#endif  
             return buf[pos++];
         }
 
@@ -58,6 +62,7 @@ namespace TrickyUnits{
             for (int i = 0; i < 8; i++) {
                 if (i < bytes) ret.buf[i] = RChar(); else ret.buf[i] = 0;
             }
+            return ret;
         }
 
         unsigned char ReadByte() {
@@ -125,23 +130,49 @@ namespace TrickyUnits{
         dsiz = MS.ReadInt();
         rlen = b2b(pbit);
         wlen = b2b(ubit);
-        for (int i = 0; i < dsiz; i++) Dictionary.push_back(MS.Read(rlen));
+        restbuf.clear();
+        Dictionary.clear();
+        for (int i = 0; i < dsiz; i++) Dictionary.push_back(MS.Read(wlen));
         for (int i = 0; i < rest; i++) restbuf.push_back(MS.ReadByte());
         while (!MS.EOB()) {
             auto r = MS.Read(rlen);            
             if (r.integer >= Dictionary.size()) { ecode = jxda_error::DictionaryIndexError; goto einde; }
             for (int i = 0; i < wlen; i++) {
-                if (opos >= tsize) { ecode = jxda_error::UnpackSizeOverflow; goto einde; }
+                if (opos >= tsize) { 
+#ifdef JXSDA_ShowExitCode
+                    cout << "UnpackSizeOverflow>D: "<<opos<<"/"<<tsize;
+#endif
+                    ecode = jxda_error::UnpackSizeOverflow; goto einde; 
+                }
                 target[opos++] = Dictionary[r.integer].buf[i];
             }
         }
         for (byte b : restbuf) {
-            if (opos >= tsize) { ecode = jxda_error::UnpackSizeOverflow; goto einde; }
+#ifdef JXSDA_ShowExitCode
+            cout << "Check rest!\n";
+#endif
+            if (opos >= tsize) { 
+#ifdef JXSDA_ShowExitCode
+                cout << "UnpackSizeOverflow>R: " << opos << "/" << tsize;
+#endif
+
+                ecode = jxda_error::UnpackSizeOverflow; 
+                goto einde; 
+            }
             target[opos++] = b;
         }
-        if (opos < tsize) { ecode = jxda_error::UnpackSizeUnderflow; goto einde; }
+        if (opos < tsize) { 
+#ifdef JXSDA_ShowExitCode
+            cout << "Rest: Size:" << (int)rest << "; Restbuf: " << restbuf.size() << ";\t p"<<(int)pbit<<"/u"<<(int)ubit<< "\t"<<ssize<<"\n";
+            cout << "UnpackSizeUnderflow> " << opos << "/" << tsize<<endl;
+#endif
+            ecode = jxda_error::UnpackSizeUnderflow; goto einde; 
+        }
         // TODO: Actual code!
-        einde:
+    einde:
+#ifdef JXSDA_ShowExitCode
+        cout << "JXSDA: Unpack Exit code: " << (int)ecode << "!\n";
+#endif 
         return ecode;
     }
 
