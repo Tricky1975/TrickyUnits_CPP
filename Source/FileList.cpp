@@ -17,6 +17,7 @@
 // misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
+#include <algorithm>
 #include <iostream>
 #include "..\Headers\FileList.hpp"
 
@@ -93,6 +94,7 @@ std::vector<std::string> TrickyUnits::FileList(std::string Dir, DirWant Want, bo
         } while (::FindNextFile(hFind, &fd));
         ::FindClose(hFind);
     }
+    std::sort(ret.begin(), ret.end());
     return ret;
 #else
 #pragma message("WARNING! FileList is not yet supported by this platform! An empty vector will be returned in stead!")
