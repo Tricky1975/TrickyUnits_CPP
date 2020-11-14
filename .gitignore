@@ -2,3 +2,6 @@ MKL*
 *.MKL.*
 Test
 .vs
+obj
+bin
+
