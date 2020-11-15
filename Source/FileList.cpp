@@ -1,7 +1,7 @@
 // Lic:
 // Source/FileList.cpp
 // Tricky's Units - File List
-// version: 20.11.14
+// version: 20.11.15
 // Copyright (C) 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
