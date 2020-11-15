@@ -30,6 +30,11 @@ namespace TrickyUnits {
 	bool FileExists(string file);
 	string LoadString(string file);
 	void SaveString(string file, string stringvalue);
-	
+
+	bool DirectoryExistsC(const char* folderName);
+	bool DirectoryExists(string folderName);
+
+	bool MakeDir(string dir);
+	bool MakeDirC(const char* dir);
 }
 #endif
