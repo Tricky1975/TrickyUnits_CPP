@@ -1,7 +1,7 @@
 // Lic:
 // Source/Dirry.cpp
 // Dirry
-// version: 20.10.06
+// version: 20.11.15
 // Copyright (C) 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -71,10 +71,10 @@ namespace TrickyUnits {
         auto ret = path;
         DirryInit();
         for (auto dostuff : DVar) {
-            cout << "Dirry debug: $" << dostuff.first << "$ = " << dostuff.second << endl;
+            // cout << "Dirry debug: $" << dostuff.first << "$ = " << dostuff.second << endl;
             ret = TReplace(ret, "$" + dostuff.first + "$", dostuff.second);
         }
-        cout << "Dirry over!\n";
+        // cout << "Dirry over!\n";
         return ret;
     }
 
