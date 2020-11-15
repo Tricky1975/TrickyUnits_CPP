@@ -1,7 +1,7 @@
 // Lic:
 // Source/GINIE.cpp
 // GINIE is not INI either
-// version: 20.08.20
+// version: 20.11.15
 // Copyright (C) 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -111,6 +111,12 @@ namespace TrickyUnits {
 	}
 
 	void GINIE::Value(string group, string varname, string value) {
+		Data[Upper(group)].Values[Upper(varname)] = value;
+		PerformAutoSave();
+	}
+
+	void GINIE::NewValue(string group, string varname, string value) {
+		if (Data[Upper(group)].Values.count(Upper(varname))) return;
 		Data[Upper(group)].Values[Upper(varname)] = value;
 		PerformAutoSave();
 	}

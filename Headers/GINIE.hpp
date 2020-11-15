@@ -1,7 +1,7 @@
 // Lic:
 // Headers/GINIE.hpp
 // GINIE is not INI either
-// version: 20.08.20
+// version: 20.11.15
 // Copyright (C) 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -63,6 +63,7 @@ namespace TrickyUnits {
 		/// <param name="source"></param>
 		/// <param name="merge"></param>
 		void Parse(std::string source, bool merge = false);
+		void NewValue(std::string group, std::string varname, std::string value);
 		void Value(std::string group, std::string varname, std::string value);
 		std::string Value(std::string group, std::string varname);
 		std::string UnParse();
