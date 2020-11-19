@@ -1,7 +1,7 @@
 // Lic:
 // Source/GetHTTP.cpp
 // Get HTTP
-// version: 20.11.15
+// version: 20.11.17
 // Copyright (C) 2020 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
