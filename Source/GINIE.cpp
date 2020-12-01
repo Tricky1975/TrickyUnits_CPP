@@ -57,6 +57,12 @@ namespace TrickyUnits {
 		return LastError;
 	}
 
+	std::vector<std::string> GINIE::EachList(std::string sect) {
+		vector<std::string> ret{};
+		for (auto& it : Data[Upper(sect)].Lists) ret.push_back(it.first);
+		return ret;
+	}
+
 	string EIL(string msg, int l) {
 		return msg + " in line " + to_string(l + 1);
 	}
@@ -78,6 +84,7 @@ namespace TrickyUnits {
 				if (Upper(line) == "*END")
 					inlist = "";
 				else
+					//cout << "Added " << line << " to list [" << currenttag << "," << line << endl;
 					Data[currenttag].Lists[inlist].push_back(line);
 			}
 			else if (prefixed(line, "[") && suffixed(line, "]")) {
@@ -88,7 +95,7 @@ namespace TrickyUnits {
 				if (currenttag == "")
 					JamError(EIL("List without group", ln));
 				else
-					inlist = line.substr(6);
+					inlist = Upper(line.substr(6));
 			}
 			else if (currenttag != "" && (inlist=="")) {
 				int pos = findfirst(line, '=');

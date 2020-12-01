@@ -63,6 +63,7 @@ namespace TrickyUnits {
 		/// <param name="source"></param>
 		/// <param name="merge"></param>
 		void Parse(std::string source, bool merge = false);
+		// Creates a new value, but only if it didn't already exist. If it does exist this instruction will simply be ignored. Handy for setting default values.
 		void NewValue(std::string group, std::string varname, std::string value);
 		void Value(std::string group, std::string varname, std::string value);
 		std::string Value(std::string group, std::string varname);
@@ -71,6 +72,7 @@ namespace TrickyUnits {
 		void Add(std::string group, std::string list, std::string value);
 		unsigned int ListCount(std::string group, std::string list);
 		std::vector<std::string> List(std::string group, std::string list);
+		std::vector<std::string> EachList(std::string sect);
 		void FromFile(std::string file, bool allownonexistent=false, bool merge=false);
 		void ToFile(std::string file);
 	};
