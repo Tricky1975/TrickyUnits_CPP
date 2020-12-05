@@ -60,6 +60,7 @@ namespace TrickyUnits {
 	std::string TReplace(std::string mystr, char ori, char subst);
 	std::string TReplace(std::string mystr, std::string ori, std::string subst);
 	std::vector<std::string> Split(std::string str, char spltchar);
+	std::vector<std::string> Split(std::string str, char spltchar, int max);
 	/// <summary>
 	/// Splits a std::string into lines. WARNING! Please note this routine is only compatible with Unix LF and Windows CRLF. Systems using only CR will just lead to on big std::string with all their new lines removed.
 	/// </summary>
@@ -75,6 +76,7 @@ namespace TrickyUnits {
 	std::string Trim(std::string str);
 
 	void Trans2Upper(std::string &str);
+	void Trans2Lower(std::string& str);
 
 	/// <summary>
 	/// Gives uppercase version of a std::string. Please note "Trans2Upper" replaces the original std::string. If that is not what you want, this function copies the std::string and turns that to upper case in stead!
@@ -82,11 +84,16 @@ namespace TrickyUnits {
 	/// <param name="str"></param>
 	/// <returns></returns>
 	std::string Upper(std::string str);
+	std::string Lower(std::string str);
 
 
 	std::string bsdec(const char* str);
 	std::string bsdec(std::string str);
 	std::string hashmd5(std::string str);
+
+	std::string Hex(int num);
+
+	std::string StringJoin(std::string lnk, std::vector<std::string> strs);
 }
 
 

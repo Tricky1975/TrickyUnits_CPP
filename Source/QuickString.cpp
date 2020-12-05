@@ -180,6 +180,20 @@ namespace TrickyUnits {
         return ret;
     }
 
+    vector<string> Split(string str, char spltchar,int max) {
+        vector<string> ret;
+        unsigned int idx = 0;
+        for (int i = 0; i < str.size(); i++) {
+            if (idx >= ret.size()) ret.push_back("");
+            if (str[i] == spltchar && idx<max)
+                idx++;
+            else
+                ret[idx] += str[i];
+        }
+        return ret;
+    }
+
+
     vector<string> StringToLines(string str) {
         vector<string> ret;
         unsigned int idx = 0;
@@ -227,9 +241,20 @@ namespace TrickyUnits {
         std::transform(str.begin(), str.end(), str.begin(), ::toupper); 
     }
 
+    void Trans2Lower(string& str) {
+        std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+    }
+
+
     string Upper(string str)  {
         string ret = str;
         Trans2Upper(ret);
+        return ret;
+    }
+
+    std::string Lower(std::string str) {
+        string ret = str;
+        Trans2Lower(ret);
         return ret;
     }
 
@@ -259,6 +284,21 @@ namespace TrickyUnits {
             cout << endl;
         */
         return "Not yet operational"; 
+    }
+
+    std::string Hex(int num) {
+        char H[10];
+        sprintf_s(H, "%08X", num);
+        return std::string(H);
+    }
+
+    std::string StringJoin(std::string lnk, std::vector<std::string> strs) {
+        string ret{ "" };
+        for (auto s : strs) {
+            if (ret.size()) ret += lnk;
+            ret += s;
+        }
+        return ret;
     }
 
 
