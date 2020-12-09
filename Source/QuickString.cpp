@@ -61,6 +61,7 @@ namespace TrickyUnits {
         if (length > str.size()) return str;
         return mid(str, (str.size() - length) + 1, length);
     }
+    //string right(string str, size_t length) { return right(str, (unsigned int)length); }
 
 
     bool prefixed(string str, string prefix) {
