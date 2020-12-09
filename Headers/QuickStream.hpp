@@ -20,6 +20,7 @@
 #ifndef INCLUDED_TRICKY_UNIT_QUICKSTREAM
 #define INCLUDED_TRICKY_UNIT_QUICKSTREAM
 #include <string>
+#include <fstream>
 
 
 
@@ -36,5 +37,7 @@ namespace TrickyUnits {
 
 	bool MakeDir(string dir);
 	bool MakeDirC(const char* dir);
+
+	std::ifstream::pos_type FileSize(std::string filename);
 }
 #endif

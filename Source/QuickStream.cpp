@@ -155,6 +155,12 @@ namespace TrickyUnits {
 		return MDIR(tmp) != 0;; //, S_IRWXU);		
 	}
 
+	std::ifstream::pos_type FileSize(std::string filename) {
+		std::ifstream in(filename.c_str(), std::ifstream::ate | std::ifstream::binary);
+		return in.tellg();
+	}
+
+	
 	vector<string> LoadLines(string file){
 		return StringToLines(LoadString (file));
 	}
