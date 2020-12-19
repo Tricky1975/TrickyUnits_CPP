@@ -19,6 +19,7 @@
 // EndLic
 #include <string>
 
+
 #ifdef __APPLE__
 	#include <TargetConditionals.h>
 #endif
