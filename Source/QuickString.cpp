@@ -302,6 +302,16 @@ namespace TrickyUnits {
         return ret;
     }
 
+    long long FindString(std::string Needle, std::string HayStack) {
+        auto NS = Needle.size();
+        if (Needle.size() > HayStack.size()) return -1;
+        if (Needle == HayStack) return 0;
+        for (long long i = 0; i < HayStack.size() - Needle.size(); i++) {
+            if (mid(HayStack, i, NS) == Needle) return i;
+        }
+        return -1;
+    }
+
 
     string ExtractExt(std::string file){
         file = TReplace(file, '\\', '/');
