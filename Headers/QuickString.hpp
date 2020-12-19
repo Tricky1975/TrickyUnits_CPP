@@ -94,6 +94,9 @@ namespace TrickyUnits {
 	std::string Hex(int num);
 
 	std::string StringJoin(std::string lnk, std::vector<std::string> strs);
+
+	// Returns the position of where a substringis found fist, and returns -1 if not found at all.
+	long long FindString(std::string Needle, std::string HayStack);
 }
 
 
