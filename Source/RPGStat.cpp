@@ -154,6 +154,11 @@ namespace TrickyUnits {
 
 	}
 
+	void Character::SetData(string Data,string value) {
+		if (!MapData.count(Data)) MapData[Data] = new CharData();
+		MapData[Data]->Value = value;
+	}
+
 	vector<string> Character::Stats() {
 		RPGDataGather(MapStat);
 	}
@@ -181,6 +186,10 @@ namespace TrickyUnits {
 
 	void Character::CreateChar(std::string Tag) {
 		Map[Tag] = Character(Tag);
+	}
+
+	int Character::CountChars() {
+		return Map.size();
 	}
 
 	Character::Character() {
@@ -289,6 +298,23 @@ namespace TrickyUnits {
 		return _max;
 	}
 
+	void Party::Remove(std::string Tag) {
+		for (int i = 1; i <= _max; i++) {
+			if (Tag == _party[i]) {
+				Remove(i);
+				return;
+			}
+		}
+	}
+
+	void Party::Remove(int memnum) {
+		if (memnum<1 || memnum>_max) { Paniek("Remove Member Out Of Range"); }
+		for (int i = memnum; i <= _max; i++) {
+			_party[i] = _party[i + 1];
+		}
+		_party[memnum] = "";
+	}
+
 	void ResetRPG() {
 		Party::Max(0);
 		Character::Map.clear();
@@ -298,6 +324,15 @@ namespace TrickyUnits {
 
 	void CharList::Add(string s) {
 		List.push_back(s);
+	}
+
+	void CharList::Remove(string s) {
+		for (size_t i = 0; i < List.size(); i++) {
+			if (List[i] == s) {
+				List.erase(List.begin() + i);
+				return;
+			}
+		}
 	}
 
 }

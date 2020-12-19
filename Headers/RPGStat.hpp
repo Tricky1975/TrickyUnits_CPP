@@ -41,6 +41,8 @@ namespace TrickyUnits {
 	public:
 		vector<string> List;
 		void Add(string s);
+		void Remove(string s);
+
 	};
 
 	class CharStat {
@@ -102,6 +104,8 @@ namespace TrickyUnits {
 		CharList* GetList(string Stat, bool safe = true);
 		CharPoints* GetPoints(string Data, bool safe = true);
 
+		void SetData(std::string Data,std::string value);
+
 		vector<string> Stats();
 		vector<string> Datas(); // I know this is odd English, but it will have to do! :-P
 		vector<string> Lists();
@@ -113,6 +117,7 @@ namespace TrickyUnits {
 		static map <string, Character> Map;
 		static RPGPanic Panic;
 		static void CreateChar(std::string Tag);
+		static int CountChars();
 
 		Character();
 		Character(std::string Tag);
@@ -128,6 +133,8 @@ namespace TrickyUnits {
 		static string Member(int memnum);
 		static void Max(int maxnum);
 		static int Max();
+		static void Remove(std::string Tag);
+		static void Remove(int memnum);
 
 	};
 
