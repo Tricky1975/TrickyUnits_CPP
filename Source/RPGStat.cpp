@@ -279,13 +279,13 @@ namespace TrickyUnits {
 	vector<string> Party::_party;
 	
 	void Party::Member(int memnum, string setmem,bool dontcheckexistance) {
-		if (memnum<1 || memnum>_max) { Paniek("Set Member Out Of Range"); }		
+		if (memnum<1 || memnum>_max) { Paniek("Set Member Out Of Range ("+to_string(memnum)+":"+to_string(_max)+")"); }		
 		if (!(Character::Map.count(setmem)||dontcheckexistance )) { Paniek("Member " + setmem + " doesn't exist and can therefore also not be put in the party!"); }
 		_party[memnum - 1] = setmem;
 	}
 
 	string Party::Member(int memnum) {
-		if (memnum<1 || memnum>_max) { Paniek("Get Member Out Of Range") ""; }
+		if (memnum<1 || memnum>_max) { Paniek("Get Member Out Of Range (" + to_string(memnum) + ":" + to_string(_max) + ")") ""; }
 		return _party[memnum - 1];
 	}
 
