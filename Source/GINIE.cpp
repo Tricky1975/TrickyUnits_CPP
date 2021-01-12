@@ -1,8 +1,8 @@
 // Lic:
 // Source/GINIE.cpp
 // GINIE is not INI either
-// version: 20.11.15
-// Copyright (C) 2020 Jeroen P. Broks
+// version: 21.01.13
+// Copyright (C) 2020, 2021 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
