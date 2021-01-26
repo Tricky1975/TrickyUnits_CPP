@@ -20,6 +20,7 @@
 #include "..\Headers\RPGStat.hpp"
 #include "QuickString.hpp"
 
+#define Chat(a) cout << "\x1b[32mRPG-DEBUG> \x1b[0m"<<a<<endl
 
 #define PerformNULL(TheMap) \
 		if (!TheMap.count(Tag)) return;\
@@ -186,6 +187,7 @@ namespace TrickyUnits {
 
 	void Character::CreateChar(std::string Tag) {
 		Map[Tag] = Character(Tag);
+		cout << "Character '" << Tag << "' created!\n"; // debug
 	}
 
 	int Character::CountChars() {
@@ -193,7 +195,7 @@ namespace TrickyUnits {
 	}
 
 	Character::Character() {
-		cout << "\x7WARNING! Character created without any tag\n";
+		cout << "\x7WARNING! Character created without any tag!\n";
 	}
 
 	Character::Character(std::string Tag) { CharTag = Tag; }
@@ -210,10 +212,15 @@ namespace TrickyUnits {
 		// cout << maxcopy << " << MAXCOPY!\n";
 		if (maxcopy == "") return;
 		_maximum = Character::Map[chartag].GetStat(maxcopy)->Value();
+		UnForce();
 		// cout << "MAXCOPY:" << chartag << "." << maxcopy << " >> " << _maximum << "\n";
 	}
 
-	void CharPoints::Have(int v) { _have = max(min(v, _maximum), _minimum); }
+	void CharPoints::Have(int v) { 
+		//_have = max(min(v, _maximum), _minimum); 
+		_have = v;
+		UnForce();
+	}
 
 	void CharPoints::ForceHave(int v) {
 		_have = v;
@@ -229,7 +236,14 @@ namespace TrickyUnits {
 		_maximum = v;
 	}
 
-	void CharPoints::UnForce() { _have = max(min(_have, _maximum), _minimum); }
+	void CharPoints::UnForce() {
+		// _have = max(min(_have, _maximum), _minimum);  // ? Ignored?
+		//Paniek("UNFORCE!!!");; // Force an error to guarantee me this function is called at all!
+		if (_minimum > _maximum) { Paniek("Points Unforce error! Maximum lower than minumum"); }
+		if (_have > _maximum) { Chat("Have:" << _have << " greater than max:" << _maximum << "\tCorrecting!"); _have = _maximum; }
+		if (_have < _minimum) { Chat("Have:" << _have << " lower   than min:" << _minimum << "\tCorrecting!"); _have = _minimum; }
+	
+	}
 
 
 	int CharPoints::Have() { return _have; }
@@ -252,7 +266,7 @@ namespace TrickyUnits {
 				for (int i = 1; i < sp.size(); i++) {
 					auto ss = Split(sp[i], '.');
 					if (ss.size() < 2) { Paniek("Script error") 0; }
-					for (int j = 1; j < ss.size(); j++) _value += Character::Map[ss[0]].GetStat(ss[1])->Value();
+					for (int j = 1; j < ss.size(); j++) _value += Character::Map[ss[0]].GetStat(ss[j])->Value();
 				}
 			} else {
 				Paniek("Scripting stats NOT yet supported!") 0;

@@ -89,6 +89,7 @@ namespace TrickyUnits{
 						JT_EntryReader BT;
 					jcr->B(scanentry.first, BT);
 					CharPoints* sp = NULL;
+					vector<string> UnForceLijst;
 					while (!BT.eof()) {
 						auto tag = BT.ReadByte();
 						switch (tag) {
@@ -100,12 +101,13 @@ namespace TrickyUnits{
 							*/
 							auto PN = BT.ReadString();
 							sp = Character::Map[TN].GetPoints(PN);
+							UnForceLijst.push_back(PN);
 							Chat("Points pointer set to: " + PN);
 						}
-							break;
+							  break;
 						case 2: {
 							auto fuck = BT.ReadString(); // For some reason C++ wants to crash on this (without apparent reason).
-							if (!sp) doRPGPanic("Tried to maxcopy a NULL pointer for points ("+TN+")");
+							if (!sp) doRPGPanic("Tried to maxcopy a NULL pointer for points (" + TN + ")");
 							sp->MaxCopy(fuck);
 							break;
 						}
@@ -123,17 +125,25 @@ namespace TrickyUnits{
 							doRPGPanic("FATAL ERROR:\n\nUnknown tag in character (" + TN + ") points file (" + to_string(tag) + ") within this savegame file ");
 						}
 					}
-					sp->UnForce();
+					//sp->UnForce();
+					/*
+					Chat("Unforcing " << UnForceLijst.size() << " points records!"); // DEBUG ONLY!
+					for (auto ufsp : UnForceLijst) {
+						auto u{ Character::Map[TN].GetPoints(ufsp) };
+						Chat("- " << ufsp << "   Have: " << u->Have() << "; Mini: " << u->Mini() << "; Maxi: " << u->Maxi());
+						u->UnForce();
+					}
+					*/
 					// Char: Data
 					RCase("STRDATA")
 						//cout << "Scan data: " << scanentry.first << "\n";
 						auto data = jcr->StringMap(scanentry.first);
-						auto ch = &Character::Map[TN];
-						ch->NULLAllData(); // Once again make sure all data is destroyed, to prevent conflicts
-						for (auto it : data) {
-							//cout << "Read Data: " << it.first << " => " << it.second << "\n";
-							ch->GetData(it.first)->Value = it.second;
-						}
+					auto ch = &Character::Map[TN];
+					ch->NULLAllData(); // Once again make sure all data is destroyed, to prevent conflicts
+					for (auto it : data) {
+						//cout << "Read Data: " << it.first << " => " << it.second << "\n";
+						ch->GetData(it.first)->Value = it.second;
+					}
 					// Char: List
 					RCase("LISTS")
 						JT_EntryReader BT;
@@ -150,7 +160,7 @@ namespace TrickyUnits{
 						case 2:
 							ls->Add(BT.ReadString());
 							break;
-						default:							
+						default:
 							doRPGPanic("FATAL ERROR:\n\nUnknown tag in character (" + TN + ") list file (" + to_string(tag) + ") within this savegame file ");
 						}
 					}
@@ -164,43 +174,49 @@ namespace TrickyUnits{
 			int PMAX = BT.ReadInt();
 			int p = 0;
 			Party::Max(PMAX);
-			while(!BT.eof()){
-				Party::Member(++p, BT.ReadString(),true);
+			while (!BT.eof()) {
+				Party::Member(++p, BT.ReadString(), true);
 			}
 		}
 		// Links		
-			if (jcr->EntryExists(prefix + "Links")) {
-				//DebugLog("Links found! Loading them!");
-				//BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Links"));
-				JT_EntryReader BT;
-				jcr->B(prefix + "Links",BT);
-				//do { //Repeat
-				while (!BT.eof()) {
-					auto tag = BT.ReadByte();
-					switch (tag) {
-					case 001:{
-						auto linktype = Upper(BT.ReadString());
-						auto linkch1 = BT.ReadString();
-						auto linkch2 = BT.ReadString();
-						auto linkstat = BT.ReadString();
-						auto ch = &Character::Map[linkch1];
-						if (false) { //switch (linktype.ToUpper()) {
-							LCase("STAT") ch->LinkStat(linkstat, linkch2);
-							LCase("PNTS") ch->LinkPoints(linkstat, linkch2);
-							LCase("DATA") ch->LinkData(linkstat, linkch2);
-							LCase("LIST") ch->LinkList(linkstat, linkch2);
-						} else {
-							cout << "ERROR! I don't know what a " << linktype << " is so I cannot link! Request ignored!\n";
-						}
-						}
-						break;
-					case 255:
-						goto GetOutOfThisLinkLoop; // Nothing I hate more than "goto" commands, but due to the way switches are set up in C-dialects, I got no choice!
-					default:
-						doRPGPanic("ERROR! Unknown link command tag ("+to_string(tag)+")");
+		if (jcr->EntryExists(prefix + "Links")) {
+			//DebugLog("Links found! Loading them!");
+			//BT = new QuickStream(LoadFrom.AsMemoryStream(D + "Links"));
+			JT_EntryReader BT;
+			jcr->B(prefix + "Links", BT);
+			//do { //Repeat
+			while (!BT.eof()) {
+				auto tag = BT.ReadByte();
+				switch (tag) {
+				case 001: {
+					auto linktype = Upper(BT.ReadString());
+					auto linkch1 = BT.ReadString();
+					auto linkch2 = BT.ReadString();
+					auto linkstat = BT.ReadString();
+					auto ch = &Character::Map[linkch1];
+					if (false) { //switch (linktype.ToUpper()) {
+						LCase("STAT") ch->LinkStat(linkstat, linkch2);
+						LCase("PNTS") ch->LinkPoints(linkstat, linkch2);
+						LCase("DATA") ch->LinkData(linkstat, linkch2);
+						LCase("LIST") ch->LinkList(linkstat, linkch2);
+					} else {
+						cout << "ERROR! I don't know what a " << linktype << " is so I cannot link! Request ignored!\n";
 					}
-				}// while (!BT.EOF); //Until Eof(bt)
-			GetOutOfThisLinkLoop:;
+				}
+						break;
+				case 255:
+					goto GetOutOfThisLinkLoop; // Nothing I hate more than "goto" commands, but due to the way switches are set up in C-dialects, I got no choice!
+				default:
+					doRPGPanic("ERROR! Unknown link command tag (" + to_string(tag) + ")");
+				}
+			}// while (!BT.EOF); //Until Eof(bt)
+		GetOutOfThisLinkLoop:
+			;
+		}
+		for (auto c : Character::Map) {
+			for (auto p : c.second.Points()) {
+				c.second.GetPoints(p)->UnForce();
+			}
 		}
 	}
 
