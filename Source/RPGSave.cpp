@@ -89,7 +89,7 @@ namespace TrickyUnits{
 						JT_EntryReader BT;
 					jcr->B(scanentry.first, BT);
 					CharPoints* sp = NULL;
-					vector<string> UnForceLijst;
+					//vector<string> UnForceLijst;
 					while (!BT.eof()) {
 						auto tag = BT.ReadByte();
 						switch (tag) {
@@ -100,9 +100,9 @@ namespace TrickyUnits{
 							RPG_TMap.MapInsert(ch.Points, TN, sp);
 							*/
 							auto PN = BT.ReadString();
-							sp = Character::Map[TN].GetPoints(PN);
-							UnForceLijst.push_back(PN);
-							Chat("Points pointer set to: " + PN);
+							sp = Character::Map[TN].GetPoints(PN);							
+							//UnForceLijst.push_back(PN);
+							Chat("Points pointer set to: " + PN + "\t (" + TN + ")");
 						}
 							  break;
 						case 2: {
@@ -194,6 +194,7 @@ namespace TrickyUnits{
 					auto linkch2 = BT.ReadString();
 					auto linkstat = BT.ReadString();
 					auto ch = &Character::Map[linkch1];
+					// cout << "RPGLoad.Link : " << linktype << "; " << linkch1 << "; " << linkch2 << "; " << linkstat << endl;
 					if (false) { //switch (linktype.ToUpper()) {
 						LCase("STAT") ch->LinkStat(linkstat, linkch2);
 						LCase("PNTS") ch->LinkPoints(linkstat, linkch2);
@@ -213,9 +214,12 @@ namespace TrickyUnits{
 		GetOutOfThisLinkLoop:
 			;
 		}
-		for (auto c : Character::Map) {
-			for (auto p : c.second.Points()) {
-				c.second.GetPoints(p)->UnForce();
+		for (auto &c : Character::Map) {
+			auto ch{ &Character::Map[c.first] };
+			ch->ScanImpurities();
+			for (auto& p : ch->Points()) {
+				Chat("Unforce: " << c.first << "." << p << " has: " << ch->HasPoints(p));
+				ch->GetPoints(p)->UnForce();
 			}
 		}
 	}
@@ -252,6 +256,7 @@ namespace TrickyUnits{
 			BT = jcr->StartEntry(prefix + "CHARACTER/" + ch + "/Stats", Storage);
 			for (auto& key : dt->Stats()) {
 				auto st{ dt->GetStat(key) };
+				if (!st) doRPGPanic("RPGSave: Stat has a NULL reference: " + ch + "." + key);
 				BT->Write((char)1);
 				BT->Write(key);
 				BT->Write((char)2);
@@ -321,16 +326,16 @@ namespace TrickyUnits{
 					och2 = &itch2.second; // (RPGCharacter)RPG_TMap.MapValueForKey(RPGChars, ch2);
 					//foreach(string stat in RPG_TMap.MapKeys(och1.Stats))
 					for (auto stat : och1->Stats())
-						if (och1->GetStat(stat) == och2->GetStat(stat)) SaveRPGLink(BTE, "Stat", ch1, ch2, stat);
+						if (och2->HasStat(stat) && och1->GetStat(stat) == och2->GetStat(stat)) SaveRPGLink(BTE, "Stat", ch1, ch2, stat);
 					//foreach(string stat in RPG_TMap.MapKeys(och1->StrData))
 					for (auto stat : och1->Datas())
-						if (och1->GetData(stat) == och2->GetData(stat)) SaveRPGLink(BTE, "Data", ch1, ch2, stat);
+						if (och2->HasData(stat) && och1->GetData(stat) == och2->GetData(stat)) SaveRPGLink(BTE, "Data", ch1, ch2, stat);
 					//foreach(string stat in RPG_TMap.MapKeys(och1->Points))
 					for (auto stat : och1->Points())
-						if (och1->GetPoints(stat) == och2->GetPoints(stat)) SaveRPGLink(BTE, "PNTS", ch1, ch2, stat);
+						if (och2->HasPoints(stat) && och1->GetPoints(stat) == och2->GetPoints(stat)) SaveRPGLink(BTE, "PNTS", ch1, ch2, stat);
 					//foreach(string stat in RPG_TMap.MapKeys(och1->Lists))
 					for (auto stat : och1->Lists())
-						if (och1->GetList(stat) == och2->GetList(stat)) SaveRPGLink(BTE, "LIST", ch1, ch2, stat);
+						if (och2->HasList(stat) && och1->GetList(stat) == och2->GetList(stat)) SaveRPGLink(BTE, "LIST", ch1, ch2, stat);
 					//Debug.WriteLine("= All okay!");
 				//} catch (System.Exception Ex) {
 				} catch (const std::exception& e){
