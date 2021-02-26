@@ -130,7 +130,13 @@ namespace TrickyUnits {
 		vector<string> Lists();
 		vector<string> Points();
 
-		std::string StatList();
+		std::string StatList(); // Debug
+
+		/// <summary>
+		/// This will scan a character record for stuff that does not belong in there. If clean is set to true (default) it will even remove it!
+		/// </summary>
+		/// <param name="clean"></param>
+		void ScanImpurities(bool clean = true);
 
 		string Name;
 		static map <string, Character> Map;
