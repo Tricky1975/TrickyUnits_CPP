@@ -42,7 +42,7 @@
 
 #define RPGDataGather(DataMap)\
 		vector<string> ret;\
-		for (auto& scan : DataMap) ret.push_back(scan.first);\
+		for (auto& scan : DataMap) if (scan.second) ret.push_back(scan.first);\
 		return ret;
 
 
@@ -102,29 +102,49 @@ namespace TrickyUnits {
 	}
 
 	void Character::LinkStat(string Stat, string SourceChar) {
+		if (!Map.count(SourceChar)) { Paniek("Tried to link with non-existent character"); }
 		if (&Map[SourceChar] == this) { Paniek("Cannot link with oneself!"); }
+		if (Stat == "*") {
+			for (auto& k : Map[SourceChar]. Stats()) LinkStat(k, SourceChar);
+			return;
+		}
 		if (!Map[SourceChar].HasStat(Stat)) { Paniek("Tried to link to non-existent stat (" + Stat + " from " + SourceChar + ")"); }
 		NULLStat(Stat);
-		MapStat[Stat] = Map[SourceChar].GetStat(Stat, false);
+		MapStat[Stat] = Map[SourceChar].Map[SourceChar].GetStat(Stat, false);
 	}
 
 	void Character::LinkData(string Data, string SourceChar) {
+		if (!Map.count(SourceChar)) { Paniek("Tried to link with non-existent character"); }
 		if (&Map[SourceChar] == this) { Paniek("Cannot link with oneself!"); }
+		if (Data == "*") {
+			for (auto& k : Map[SourceChar].Datas()) LinkData(k, SourceChar);
+			return;
+		}
 		if (!Map[SourceChar].HasData(Data)) { Paniek("Tried to link to non-existent Data (" + Data + " from " + SourceChar + ")"); }
 		NULLData(Data);
-		MapData[Data] = Map[SourceChar].GetData(Data, false);
+		MapData[Data] = Map[SourceChar].Map[SourceChar].GetData(Data, false);
 	}
 
 	void Character::LinkList(string List, string SourceChar) {
+		if (!Map.count(SourceChar)) { Paniek("Tried to link with non-existent character"); }
 		if (&Map[SourceChar] == this) { Paniek("Cannot link with oneself!"); }
+		if (List == "*") {
+			for (auto& k : Map[SourceChar].Lists()) LinkList(k, SourceChar);
+			return;
+		}
 		if (!Map[SourceChar].HasList(List)) { Paniek("Tried to link to non-existent List (" + List + " from " + SourceChar + ")"); }
 		NULLList(List);
 		MapList[List] = Map[SourceChar].GetList(List, false);
 	}
 
 	void Character::LinkPoints(string Pnts, string SourceChar) {
+		if (!Map.count(SourceChar)) { Paniek("Tried to link with non-existent character"); }
 		if (&Map[SourceChar] == this) { Paniek("Cannot link with oneself!"); }
-		if (!Map[SourceChar].HasList(Pnts)) { Paniek("Tried to link to non-existent Points (" + Pnts + " from " + SourceChar + ")"); }
+		if (Pnts == "*") {
+			for (auto& k : Map[SourceChar].Points()) LinkPoints(k, SourceChar);
+			return;
+		}
+		if (!Map[SourceChar].HasPoints(Pnts)) { Paniek("Tried to link to non-existent Points (" + Pnts + " from " + SourceChar + ")"); }
 		NULLPoints(Pnts);
 		MapPoints[Pnts] = Map[SourceChar].GetPoints(Pnts, false);
 	}
@@ -132,7 +152,7 @@ namespace TrickyUnits {
 	bool Character::HasStat(string Stat) { return MapStat.count(Stat); }
 	bool Character::HasData(string Data) { return MapData.count(Data); }
 	bool Character::HasList(string List) { return MapList.count(List); }
-	bool Character::HasPoints(string Pnts) { return MapData.count(Pnts); }
+	bool Character::HasPoints(string Pnts) { return MapPoints.count(Pnts) && MapPoints[Pnts]; }
 
 	CharStat* Character::GetStat(string Stat, bool safe) { GetStuff(CharStat, MapStat, Stat); }
 	CharData* Character::GetData(string Data, bool safe) { 
@@ -150,7 +170,12 @@ namespace TrickyUnits {
 	CharPoints* Character::GetPoints(string Pnts, bool safe) {
 		//GetStuff(CharPoints, MapPoints, Pnts); 
 		if (!MapPoints.count(Pnts)) { if (safe) MapPoints[Pnts] = new CharPoints(); else { Paniek("Call to non-existent MapPoints " + Pnts) NULL; } } 
-		MapPoints[Pnts]->MaxCopyUpdate(CharTag);
+		auto mp = MapPoints[Pnts];
+		if (!mp) { 
+			for (auto& whatthefuck : MapPoints) cout << "WTF! " << whatthefuck.first << ":" << (int)whatthefuck.second << "\n"; // debug
+			doRPGPanic("Internal error! NULL recevied for Character points " + CharTag + "." + Pnts); return nullptr; 
+		}
+		mp->MaxCopyUpdate(CharTag);
 		return MapPoints[Pnts];
 
 	}
@@ -183,6 +208,35 @@ namespace TrickyUnits {
 			ret += s.first + " = " + to_string(s.second->Value());
 		}
 		return ret;
+	}
+
+	static void ReportImpurities(vector<string> *k,string n){
+		for(auto i:*k)
+			cout << "IMPURITY " << n << " " << i << endl;
+	}
+	void Character::ScanImpurities(bool clean) {
+		vector<string> Kill;
+		// Points
+		for (auto k : MapPoints) if (!k.second) Kill.push_back(k.first);
+		ReportImpurities(&Kill, "Points");
+		if (clean) for (auto Slachtoffer : Kill) MapPoints.erase(Slachtoffer);
+		Kill.clear();
+		// Stats
+		for (auto k : MapStat) if (!k.second) Kill.push_back(k.first);
+		ReportImpurities(&Kill, "Stat");
+		if (clean) for (auto Slachtoffer : Kill) MapStat.erase(Slachtoffer);
+		Kill.clear();
+		// Data
+		for (auto k : MapData) if (!k.second) Kill.push_back(k.first);
+		ReportImpurities(&Kill, "Data");
+		if (clean) for (auto Slachtoffer : Kill) MapData.erase(Slachtoffer);
+		Kill.clear();
+		// Lists
+		for (auto k : MapList) if (!k.second) Kill.push_back(k.first);
+		ReportImpurities(&Kill, "List");
+		if (clean) for (auto Slachtoffer : Kill) MapList.erase(Slachtoffer);
+		Kill.clear();
+
 	}
 
 	void Character::CreateChar(std::string Tag) {
@@ -276,7 +330,7 @@ namespace TrickyUnits {
 	}
 
 	void CharStat::Value(int v) {
-		if (_script != "") { Paniek("Value fixed by script, and cannot be changed!"); }
+		if (_script != "") { Paniek("Value fixed by script, and cannot be changed!\n"+_script); }
 		_value = v;
 	}
 
@@ -293,8 +347,9 @@ namespace TrickyUnits {
 	vector<string> Party::_party;
 	
 	void Party::Member(int memnum, string setmem,bool dontcheckexistance) {
-		if (memnum<1 || memnum>_max) { Paniek("Set Member Out Of Range ("+to_string(memnum)+":"+to_string(_max)+")"); }		
-		if (!(Character::Map.count(setmem)||dontcheckexistance )) { Paniek("Member " + setmem + " doesn't exist and can therefore also not be put in the party!"); }
+		if (memnum<1 || memnum>_max) { Paniek("Set Member Out Of Range ("+to_string(memnum)+":"+to_string(_max)+")"); }	
+		if (setmem!="")
+			if (!(Character::Map.count(setmem) || dontcheckexistance)) { Paniek("Member " + setmem + " doesn't exist and can therefore also not be put in the party!"); }
 		_party[memnum - 1] = setmem;
 	}
 
