@@ -1,7 +1,7 @@
 // Lic:
 // Headers/QuickString.hpp
 // Quick String (header)
-// version: 21.01.13
+// version: 21.04.04
 // Copyright (C) 2021 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -46,6 +46,7 @@ namespace TrickyUnits {
 	std::string ExtractDir(std::string file);
 	std::string StripDir(std::string file);
 	std::string StripExt(std::string file);
+	std::string StripAll(std::string file);
 	std::string ExtractExt(std::string file);
 	int findlast(std::string str, char ch);
 	int findlast(std::string haystack, std::string needle);

@@ -1,7 +1,7 @@
 // Lic:
 // Source/QuickString.cpp
 // Quick String
-// version: 21.01.13
+// version: 21.04.04
 // Copyright (C) 2020, 2021 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -166,6 +166,10 @@ namespace TrickyUnits {
         int lastslash = findlast(file, '/');
         if (lastdot < 0 || lastdot < lastslash) return file;
         return left(file, lastdot);
+    }
+
+    std::string StripAll(std::string file) {
+        return StripDir(StripExt(file));
     }
 
     vector<string> Split(string str, char spltchar) {
