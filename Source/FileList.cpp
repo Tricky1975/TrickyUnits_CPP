@@ -1,8 +1,8 @@
 // Lic:
 // Source/FileList.cpp
 // Tricky's Units - File List
-// version: 20.11.15
-// Copyright (C) 2020 Jeroen P. Broks
+// version: 21.04.04
+// Copyright (C) 2020, 2021 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -52,6 +52,38 @@ std::string convLPCWSTRtoString(LPCWSTR wString) {
 //LPCWSTR result = stemp.c_str();
 
 #endif
+
+bool TrickyUnits::IsDir(std::string pth) {
+#ifdef ForWindows
+    using namespace std;    
+    string search_path = pth;
+    WIN32_FIND_DATA fd;
+    HANDLE hFind = ::FindFirstFile(s2ws(search_path).c_str(), &fd);
+    if (hFind != INVALID_HANDLE_VALUE)
+        return ((fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY));
+    else
+        return false;
+#else
+#pragma message("WARNING! IsDir is not yet supported by this platform! An empty vector will be returned in stead!")
+    return false;
+#endif
+}
+bool TrickyUnits::IsFile(std::string pth) {
+#ifdef ForWindows
+    using namespace std;
+    string search_path = pth;
+    WIN32_FIND_DATA fd;
+    HANDLE hFind = ::FindFirstFile(s2ws(search_path).c_str(), &fd);
+    if (hFind != INVALID_HANDLE_VALUE)
+        return (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY));
+    else
+        return false;
+#else
+#pragma message("WARNING! IsFile is not yet supported by this platform! An empty vector will be returned in stead!")
+    return false;
+#endif
+
+}
 
 
 std::vector<std::string> TrickyUnits::FileList(std::string Dir, DirWant Want, bool allowhidden, std::string addprefix) {

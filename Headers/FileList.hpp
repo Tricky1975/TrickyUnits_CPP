@@ -1,7 +1,7 @@
 // Lic:
 // Headers/FileList.hpp
 // File List (header)
-// version: 21.01.13
+// version: 21.04.04
 // Copyright (C) 2021 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -25,4 +25,6 @@ namespace TrickyUnits {
 	enum DirWant{Files,Directories,FilesAndDirectories,Tree};
 	std::vector<std::string> FileList(std::string Dir,DirWant Want=DirWant::Files,bool allowhidden=false, std::string addprefix="");
 	std::vector<std::string> GetTree(std::string dir, bool allowhidden = false);
+	bool IsFile(std::string pth);
+	bool IsDir(std::string pth);
 }
