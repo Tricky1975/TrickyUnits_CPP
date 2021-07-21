@@ -62,6 +62,22 @@ int ToInt(std::string s) {
 	}
 }
 
+unsigned int ToUInt(std::string s){
+	if (!s.size()) return 0;
+	s = Trim(s);
+	if (!s.size()) return 0;
+	auto r = right(s, s.size() - 1);
+	switch (s[0]) {
+	case '$':
+	case 'x':	return (unsigned int)TrueToInt(r, 16);
+	case '%':
+	case 'b':	return (unsigned int)TrueToInt(r, 2);
+	case 'o':	return (unsigned int)TrueToInt(r, 8);
+	default:	return (unsigned int)TrueToInt(s, 10);
+	}
+}
+
+
 
 
 
