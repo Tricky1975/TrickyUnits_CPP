@@ -22,5 +22,6 @@
 namespace TrickyUnits {
 
 	int ToInt(std::string s);
+	unsigned int ToUInt(std::string s);
 
 }
