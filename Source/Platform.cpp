@@ -1,7 +1,7 @@
 // Lic:
 // Source/Platform.cpp
 // Platform
-// version: 21.01.13
+// version: 21.09.11
 // Copyright (C) 2020, 2021 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
