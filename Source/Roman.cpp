@@ -1,7 +1,7 @@
 // Lic:
 // Source/Roman.cpp
 // Roman Numbers
-// version: 21.09.11
+// version: 21.09.18
 // Copyright (C) 2021 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -22,7 +22,7 @@
 // I manually translated this to C++
 
 #undef showbreakdown 
-#define debug
+#undef debug
 
 #include <string>
 #include <iostream>
