@@ -102,7 +102,7 @@ namespace TrickyUnits {
 
 	void SaveString(string file, string stringvalue) {
 		std::ofstream out(file);
-		out << stringvalue;
+		out << stringvalue;		
 		out.close();
 	}
 
@@ -160,9 +160,83 @@ namespace TrickyUnits {
 		return in.tellg();
 	}
 
+	OutFile WriteFile(string fname, int endian) {
+		return make_shared<True_OutFile>(fname,endian);
+	}
+
 	
 	vector<string> LoadLines(string file){
 		return StringToLines(LoadString (file));
 	}
 
+	union _ce {
+		char ac[20];
+		char c;
+		unsigned char uc;
+		int i;
+		unsigned int ui;
+		long long l;
+		unsigned long long ul;
+	};
+
+	bool True_OutFile::endmatch() {		return (!endian) || (endian==sysendian); }
+
+	True_OutFile::True_OutFile(std::string _filename, int _endian) {
+		stream = std::ofstream(_filename.c_str());
+		FileName = _filename;
+		// What endian type does the CPU have?
+		_ce ce; ce.i = 256;
+		if (ce.ac[1]) sysendian = 1; else sysendian = 2;
+	}
+
+	True_OutFile::~True_OutFile() { if (AutoClose) Close(); }
+
+	void True_OutFile::Write(char c) { stream << c; Written++; }
+
+	void True_OutFile::Write(unsigned char c) {
+		_ce ce; ce.uc = c;
+		Write(ce.c);
+	}
+
+	void True_OutFile::Write(string s, bool raw) {
+		if (!raw) Write((unsigned int)s.size());
+		for (int i = 0; i < s.size(); ++i) Write(s[i]);
+	}
+
+	void True_OutFile::Write(vector<char> buf, bool storelength) {
+		if (storelength) Write((unsigned int)buf.size());
+		for (int i = 0; i < buf.size(); ++i) Write(buf[i]);
+	}
+
+	void True_OutFile::WriteCString(const char* str) {
+		unsigned int i = 0;
+		do {
+			Write(str[i]);
+		} while (str[i++]);
+	}
+
+	unsigned long long True_OutFile::Size() {
+		return Written;
+	}
+
+	void True_OutFile::Close() {		
+		if (!closed) stream.close();
+	}
+
+#define TOFW(mytype,cem) \
+	void True_OutFile::Write(mytype myvar) {\
+		_ce ce; ce.cem = myvar;\
+		if (endmatch()) \
+				for (int i = 0; i < sizeof(mytype); ++i) Write(ce.ac[i]);\
+		else\
+			for (int i = sizeof(mytype)-1; i>=0; --i) Write(ce.ac[i]);\
+	}
+
+	TOFW(int, i);
+	TOFW(unsigned int, ui);
+	TOFW(long long, l);
+	TOFW(unsigned long long, ul);
+
+
+	
 }

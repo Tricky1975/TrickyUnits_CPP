@@ -39,5 +39,49 @@ namespace TrickyUnits {
 	bool MakeDirC(const char* dir);
 
 	std::ifstream::pos_type FileSize(std::string filename);
+
+
+	class True_OutFile;
+	typedef shared_ptr<True_OutFile> OutFile;
+	OutFile WriteFile(string fname, int endian = 1);
+
+	class True_OutFile {
+	private:
+		std::string FileName;
+		std::ofstream stream;
+		bool closed{ false };
+		int endian{ 1 }; // 0 = don't check! 1 = little endian! 2 = big endian!
+		int sysendian;
+		bool endmatch();
+		unsigned long long Written{ 0 };
+	public:
+
+		/// <summary>
+		/// When set true (default) this automatically closes a file when this instance is disposed from the memory
+		/// Only set to false when you know what you are doing. This class is to be used as a shared pointer only after all.
+		/// </summary>
+		bool AutoClose{ true };
+
+		True_OutFile(std::string _filename,int endian=1);
+		~True_OutFile();
+		void Write(char c);
+		void Write(unsigned char c);
+		
+		// Some syntax checking editors (like Visual Studio) won't like the way this is defined and show warning lines.
+		// These lines warning that the actual function doesn't exist, while in fact, it does. But I was lazy, so I chose a dirty way to do this!
+		void Write(int i);
+		void Write(unsigned int i);
+		void Write(long long i);
+		void Write(unsigned long long i);
+		void Write(string s, bool raw = false);
+		void Write(vector<char> buf, bool storelength = false);
+
+		void WriteCString(const char* str);
+
+		unsigned long long Size();
+
+		void Close();
+	};
+
 }
 #endif
