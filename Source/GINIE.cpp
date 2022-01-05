@@ -63,6 +63,19 @@ namespace TrickyUnits {
 		return ret;
 	}
 
+	std::vector<std::string> GINIE::EachValue(std::string sect) {
+		vector<std::string> ret{};
+		for (auto& it : Data[Upper(sect)].Values) ret.push_back(it.first);
+		return ret;
+	}
+
+	std::vector<std::string> GINIE::EachGroup() {
+		vector<std::string> ret{};
+		for (auto& it : Data) ret.push_back(it.first);
+		return ret;
+	}
+
+
 	string EIL(string msg, int l) {
 		return msg + " in line " + to_string(l + 1);
 	}

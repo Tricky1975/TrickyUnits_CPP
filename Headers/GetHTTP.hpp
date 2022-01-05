@@ -19,6 +19,6 @@
 // EndLic
 #include <string>
 namespace TrickyUnits{
-	std::string GetHTTP(std::string url);
+	std::string GetHTTP(std::string url, bool cutprotocol = true);
 	std::string HTTP_GetError();
 }

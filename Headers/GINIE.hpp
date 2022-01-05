@@ -73,6 +73,8 @@ namespace TrickyUnits {
 		unsigned int ListCount(std::string group, std::string list);
 		std::vector<std::string> List(std::string group, std::string list);
 		std::vector<std::string> EachList(std::string sect);
+		std::vector<std::string> EachValue(std::string sect);
+		std::vector<std::string> EachGroup();
 		void FromFile(std::string file, bool allownonexistent=false, bool merge=false);
 		void ToFile(std::string file);
 	};
