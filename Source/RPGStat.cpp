@@ -20,7 +20,8 @@
 #include "..\Headers\RPGStat.hpp"
 #include "QuickString.hpp"
 
-#define Chat(a) cout << "\x1b[32mRPG-DEBUG> \x1b[0m"<<a<<endl
+//#define Chat(a) cout << "\x1b[32mRPG-DEBUG> \x1b[0m"<<a<<endl
+#define Chat(a)
 
 #define PerformNULL(TheMap) \
 		if (!TheMap.count(Tag)) return;\
