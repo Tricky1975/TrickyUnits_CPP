@@ -210,4 +210,101 @@ namespace TrickyUnits {
 		GCHAT("Saving GINIE: " + file);
 		SaveString(file, UnParse());
 	}
+
+	typedef union {
+		char c;                    // Char
+		unsigned char b;           // Byte
+		int i;                     // Integer
+		unsigned int ui;           // Unsigned Integer
+		long long l;               // Long
+		unsigned long long ul;     // Unsinged Long;
+		size_t s;
+		char buf[20];
+	} _bc;
+
+	static void vecaddul(vector<char>* ret,unsigned long long v) {
+		_bc d; d.s = v;
+		for (auto i = 0; i < sizeof(unsigned long long); ++i) ret->push_back(d.buf[i]);
+	}
+
+	static void vecaddstr(vector<char>* ret, string v) {
+		vecaddul(ret, v.size());
+		for (auto i = 0; i < v.size(); ++i) ret->push_back(v[i]);
+	}
+
+	static unsigned long long vecul(vector<char>&buf,unsigned int* p){
+		_bc d;
+		for (auto i = 0; i < sizeof(unsigned long long); ++i) d.buf[i]=buf[*p++];
+		return d.ul;
+	}
+	static string vecstr(vector<char>& buf, unsigned int* p) {
+		auto s = vecul(buf, p);
+		string ret{ "" };
+		for (unsigned long long i = 0; i < s; ++i) s += buf[*p++];
+		return ret;
+	}
+
+	std::vector<char> GINIE::ByteUnParse() {
+		vector<char> ret{ 'G','E','N','I','E','\26' };
+		for (std::map<string, VGINIE>::iterator it = Data.begin(); it != Data.end(); ++it) {
+			ret.push_back(1);
+			vecaddstr(&ret, it->first);
+			for (std::map<string, string>::iterator itv = Data[it->first].Values.begin(); itv != Data[it->first].Values.end(); ++itv) {
+				ret.push_back(2);
+				vecaddstr(&ret, itv->first);
+				vecaddstr(&ret, itv->second);
+			}
+			for (std::map<string, vector<string>>::iterator itv = Data[it->first].Lists.begin(); itv != Data[it->first].Lists.end(); ++itv) {
+				ret.push_back(3);
+				vecaddstr(&ret,itv->first);
+				vecaddul(&ret, itv->second.size());
+				for (int i = 0; i < itv->second.size(); i++) {
+					vecaddstr(&ret, itv->second[i]);
+				}
+			}
+		}
+		ret.push_back(255);
+		return std::vector<char>();
+	}
+
+	void GINIE::ByteParse(vector<char> b,bool merge) {
+		const char* check = "GENIE\26";
+		unsigned int p{ 0 };
+		for (unsigned char i = 0; check[i]; ++i) if (check[i] != b[p++]) {
+			cout << "ERROR! Byte code not recognized as GENIE byte code\n";
+			return;
+		}
+		if (!merge) this->Clear();
+		string TAG{ "" };
+		while (p < b.size()) {
+			auto wtag{ b[p++] };
+			switch (wtag) {
+			case 1:
+				TAG = vecstr(b, &p);
+				break;
+			case 2:
+				Value(vecstr(b, &p), vecstr(b, &p));
+				break;
+			case 3: {
+				auto n = vecstr(b, &p);
+				auto s = vecul(b, &p);
+				for (unsigned long long i = 0; i < s; i++) Data[TAG].Lists[n].push_back(vecstr(b, &p));
+			}
+				  break;
+			case 0:
+			case 255:
+				return;
+			default:
+				cout << "ERROR! Unknown tag in GENIE byte code " << wtag << "!\n";
+				return;
+			}
+		}
+		
+	}
+	
+	void GINIE::ByteParse(char* src,bool merge) {		
+		int n = sizeof(src) / sizeof(src[0]);
+		std::vector<char> Buf(src, src + n);
+		ByteParse(Buf,merge);
+	}
 }
