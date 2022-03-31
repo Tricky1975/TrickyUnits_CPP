@@ -24,6 +24,8 @@
 #undef GINIE_DEBUG
 
 
+using namespace std;
+
 namespace TrickyUnits {
 
 	// Class GENIE
@@ -202,9 +204,12 @@ namespace TrickyUnits {
 			return; // Return anyway! No file means nothing to do anyway.
 		}
 		GCHAT("Loading: " + file);
-		auto src = LoadString(file);
+		//auto src = LoadString(file);
 		// cout << "LOADED:\n" << src << "END\n"; // debug!
-		Parse(src,merge);
+		//Parse(src,merge);
+		std::vector<char> src;
+		LoadChars(&src, file);
+		AutoParse(src);
 	}
 	void GINIE::ToFile(string file)	{
 		GCHAT("Saving GINIE: " + file);
@@ -232,15 +237,15 @@ namespace TrickyUnits {
 		for (auto i = 0; i < v.size(); ++i) ret->push_back(v[i]);
 	}
 
-	static unsigned long long vecul(vector<char>&buf,unsigned int* p){
+	static unsigned long long vecul(vector<char>*buf,unsigned int* p){
 		_bc d;
-		for (auto i = 0; i < sizeof(unsigned long long); ++i) d.buf[i]=buf[*p++];
+		for (auto i = 0; i < sizeof(unsigned long long); ++i) d.buf[i]=(*buf)[*p++];
 		return d.ul;
 	}
-	static string vecstr(vector<char>& buf, unsigned int* p) {
+	static string vecstr(vector<char>* buf, unsigned int* p) {
 		auto s = vecul(buf, p);
 		string ret{ "" };
-		for (unsigned long long i = 0; i < s; ++i) s += buf[*p++];
+		for (unsigned long long i = 0; i < s; ++i) s += (*buf)[*p++];
 		return ret;
 	}
 
@@ -267,17 +272,19 @@ namespace TrickyUnits {
 		return std::vector<char>();
 	}
 
-	void GINIE::ByteParse(vector<char> b,bool merge) {
+
+	void GINIE::ByteParse(std::vector<char> b, bool merge) { ByteParse(&b, merge); }
+	void GINIE::ByteParse(vector<char>* b,bool merge) {
 		const char* check = "GENIE\26";
 		unsigned int p{ 0 };
-		for (unsigned char i = 0; check[i]; ++i) if (check[i] != b[p++]) {
+		for (unsigned char i = 0; check[i]; ++i) if (check[i] != (*b)[p++]) {
 			cout << "ERROR! Byte code not recognized as GENIE byte code\n";
 			return;
 		}
 		if (!merge) this->Clear();
 		string TAG{ "" };
-		while (p < b.size()) {
-			auto wtag{ b[p++] };
+		while (p < b->size()) {
+			auto wtag{ (*b)[p++] };
 			switch (wtag) {
 			case 1:
 				TAG = vecstr(b, &p);
@@ -303,8 +310,26 @@ namespace TrickyUnits {
 	}
 	
 	void GINIE::ByteParse(char* src,bool merge) {		
-		int n = sizeof(src) / sizeof(src[0]);
+		auto n = sizeof(src) / sizeof(src[0]);
 		std::vector<char> Buf(src, src + n);
 		ByteParse(Buf,merge);
 	}
+
+	void GINIE::AutoParse(std::vector<char> b, bool merge) {
+		const char* check = "GENIE\26";
+		unsigned int p{ 0 };
+		for (unsigned char i = 0; check[i]; ++i) if (check[i] != b[p++]) {		
+			Parse(Vec2Str(b), merge);
+			return;
+		}
+		ByteParse(b, merge);
+	}
+
+	void GINIE::AutoParse(char* src, bool merge) {
+		auto n = sizeof(src) / sizeof(src[0]);
+		std::vector<char> Buf(src, src + n);
+		AutoParse(Buf, merge);
+	}
+
+
 }

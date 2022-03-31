@@ -78,8 +78,11 @@ namespace TrickyUnits {
 		void FromFile(std::string file, bool allownonexistent=false, bool merge=false);
 		void ToFile(std::string file);
 		std::vector<char> ByteUnParse();
-		void ByteParse(std::vector<char> b,bool merge=false);
+		void ByteParse(std::vector<char>* b,bool merge=false);
+		void ByteParse(std::vector<char> b, bool merge = false);
 		void ByteParse(char* b,bool merge=false);
+		void AutoParse(std::vector<char> b, bool merge = false);
+		void AutoParse(char* b, bool merge = false);
 	};
 
 }
