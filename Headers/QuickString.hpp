@@ -98,6 +98,8 @@ namespace TrickyUnits {
 
 	// Returns the position of where a substringis found fist, and returns -1 if not found at all.
 	long long FindString(std::string Needle, std::string HayStack);
+
+	std::string Vec2Str(std::vector<char> input);
 }
 
 

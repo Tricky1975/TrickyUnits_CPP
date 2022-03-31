@@ -324,5 +324,10 @@ namespace TrickyUnits {
         if (lastdot < 0 || lastdot < lastslash) return "";
         return file.substr(lastdot + 1); //left(file, lastdot);
     }
+
+    string Vec2Str(vector<char> input) {
+        string s(input.begin(), input.end());        
+        return s;
+    }
      
 }
