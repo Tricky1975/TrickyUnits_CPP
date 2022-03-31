@@ -26,24 +26,25 @@
 
 
 namespace TrickyUnits {
-	using namespace std;
+	//using namespace std;
 	bool FileExists(char* file);
-	bool FileExists(string file);
-	string LoadString(string file);
-	void SaveString(string file, string stringvalue);
+	bool FileExists(std::string file);
+	std::string LoadString(std::string file);
+	void LoadChars(std::vector<char>* vec, std::string file);
+	void SaveString(std::string file, std::string stringvalue);
 
 	bool DirectoryExistsC(const char* folderName);
-	bool DirectoryExists(string folderName);
+	bool DirectoryExists(std::string folderName);
 
-	bool MakeDir(string dir);
+	bool MakeDir(std::string dir);
 	bool MakeDirC(const char* dir);
 
 	std::ifstream::pos_type FileSize(std::string filename);
 
 
 	class True_OutFile;
-	typedef shared_ptr<True_OutFile> OutFile;
-	OutFile WriteFile(string fname, int endian = 1);
+	typedef std::shared_ptr<True_OutFile> OutFile;
+	OutFile WriteFile(std::string fname, int endian = 1);
 
 	class True_OutFile {
 	private:
@@ -73,8 +74,8 @@ namespace TrickyUnits {
 		void Write(unsigned int i);
 		void Write(long long i);
 		void Write(unsigned long long i);
-		void Write(string s, bool raw = false);
-		void Write(vector<char> buf, bool storelength = false);
+		void Write(std::string s, bool raw = false);
+		void Write(std::vector<char> buf, bool storelength = false);
 
 		void WriteCString(const char* str);
 

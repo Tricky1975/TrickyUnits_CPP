@@ -100,6 +100,31 @@ namespace TrickyUnits {
 		return content;
 	}
 
+	void LoadChars(vector<char>*vec,string file) {
+		//std::vector<char> vec;
+		vec->clear();
+#ifdef QS4Windows
+		// Slow, unworthy, but otherwise Microsoft blocks this out.
+		// Microsoft HATES efficient code, so it seems.
+		char buff;
+		std::ifstream bt;
+		bt.open(file);
+		while (!bt.eof()) {
+			bt.read(&buff, 1);
+			vec->push_back(buff);
+		}
+		bt.close();		
+#else
+		if (FILE* fp = fopen("filename", "r")) {
+			char buf[1024];
+			while (size_t len = fread(buf, 1, sizeof(buf), fp)) {
+				vec->insert(vec->end(), buf, buf + len);
+			}
+			fclose(fp);
+		}
+#endif
+	}
+
 	void SaveString(string file, string stringvalue) {
 		std::ofstream out(file);
 		out << stringvalue;		
