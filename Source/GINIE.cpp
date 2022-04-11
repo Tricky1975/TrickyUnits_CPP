@@ -22,6 +22,7 @@
 #include <QuickStream.hpp>
 
 #undef GINIE_DEBUG
+#undef GINIE_BYTECODEDEBUG
 
 
 using namespace std;
@@ -239,13 +240,21 @@ namespace TrickyUnits {
 
 	static unsigned long long vecul(vector<char>*buf,unsigned int* p){
 		_bc d;
-		for (auto i = 0; i < sizeof(unsigned long long); ++i) d.buf[i]=(*buf)[*p++];
+		for (auto i = 0; i < sizeof(unsigned long long); ++i) {
+			if (i >= 20) { cout << "GINIE: Union buffer overflow (vecul)\n"; }	
+			if (*p > buf->size()) { cout << "GINIE: Position beyond end! (" << *p << "/" << buf->size() << ")\n"; }
+			d.buf[i] = (*buf)[(*p)++];
+		}
 		return d.ul;
 	}
 	static string vecstr(vector<char>* buf, unsigned int* p) {
 		auto s = vecul(buf, p);
 		string ret{ "" };
-		for (unsigned long long i = 0; i < s; ++i) s += (*buf)[*p++];
+		for (unsigned long long i = 0; i < s; ++i) {
+			if (i >= s) { cout << "GINIE: String position beyond end (vecstr)\n"; }
+			if (*p > buf->size()) { cout << "GINIE::vecstr: Position beyond end! (" << *p << "/" << buf->size() << ") string size: "<<s<<"\n"; }
+			ret += (*buf)[(*p)++];
+		}
 		return ret;
 	}
 
@@ -275,23 +284,35 @@ namespace TrickyUnits {
 
 	void GINIE::ByteParse(std::vector<char> b, bool merge) { ByteParse(&b, merge); }
 	void GINIE::ByteParse(vector<char>* b,bool merge) {
-		const char* check = "GENIE\26";
+		const char* check = "GENIE\x1b";
 		unsigned int p{ 0 };
-		for (unsigned char i = 0; check[i]; ++i) if (check[i] != (*b)[p++]) {
-			cout << "ERROR! Byte code not recognized as GENIE byte code\n";
+		for (unsigned char i = 0; check[i]; ++i) if (check[i] != (*b)[p++]) {			
+			cout << "ERROR! Byte code not recognized as GENIE byte code\n"<<p-1<<"> " <<(*b)[p]<<" != "<<check[i]<<"\n";
 			return;
 		}
 		if (!merge) this->Clear();
 		string TAG{ "" };
 		while (p < b->size()) {
 			auto wtag{ (*b)[p++] };
+#ifdef GINIE_BYTECODEDEBUG
+			cout << "WTAG = " << (int)wtag << "\n";
+#endif
 			switch (wtag) {
 			case 1:
 				TAG = vecstr(b, &p);
+#ifdef GINIE_BYTECODEDEBUG
+				cout << "TAG = " << TAG << endl;
+#endif
 				break;
-			case 2:
-				Value(vecstr(b, &p), vecstr(b, &p));
-				break;
+			case 2: {
+				auto
+					key{ vecstr(b, &p) },
+					value{ vecstr(b, &p) };
+				Value(TAG, key, value);
+#ifdef GINIE_BYTECODEDEBUG
+				cout << "Value[\"" << TAG << "\",\"" << key << "\"] = \"" << value << "\"\n";
+#endif
+			} break;
 			case 3: {
 				auto n = vecstr(b, &p);
 				auto s = vecul(b, &p);
@@ -316,7 +337,7 @@ namespace TrickyUnits {
 	}
 
 	void GINIE::AutoParse(std::vector<char> b, bool merge) {
-		const char* check = "GENIE\26";
+		const char* check = "GENIE\x1b";
 		unsigned int p{ 0 };
 		for (unsigned char i = 0; check[i]; ++i) if (check[i] != b[p++]) {		
 			Parse(Vec2Str(b), merge);
