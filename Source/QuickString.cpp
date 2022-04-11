@@ -144,6 +144,19 @@ namespace TrickyUnits {
         //*/
     }
 
+    std::string TReplace(std::string mystr, char ori, string subst) {
+        string ret;
+        for (unsigned int i = 0; i < mystr.size(); i++) {
+            if (mystr[i] == ori)
+                ret += subst;
+            else
+                ret += mystr[i];
+        }
+        return ret;
+    }
+
+    
+
     std::string ExtractDir(std::string file) {
         file = TReplace(file, '\\', '/');
         int lastslash = findlast(file, '/');
