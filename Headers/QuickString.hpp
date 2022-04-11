@@ -60,6 +60,7 @@ namespace TrickyUnits {
 	int findfirst(std::string str, char ch);
 	std::string TReplace(std::string mystr, char ori, char subst);
 	std::string TReplace(std::string mystr, std::string ori, std::string subst);
+	std::string TReplace(std::string mystr, char ori, std::string subst);
 	std::vector<std::string> Split(std::string str, char spltchar);
 	std::vector<std::string> Split(std::string str, char spltchar, int max);
 	/// <summary>
