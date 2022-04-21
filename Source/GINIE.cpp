@@ -193,8 +193,8 @@ namespace TrickyUnits {
 		return Data[g].Lists[l].size();
 	}
 
-	vector<string> GINIE::List(string group, string list) {
-		return Data[Trim(Upper(group))].Lists[Trim(Upper(list))];
+	vector<string>* GINIE::List(string group, string list) {
+		return &Data[Trim(Upper(group))].Lists[Trim(Upper(list))];
 	}
 
 	void GINIE::FromFile(string file,bool allownonexistent,bool merge) {

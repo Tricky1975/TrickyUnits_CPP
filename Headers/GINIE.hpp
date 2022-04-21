@@ -71,7 +71,7 @@ namespace TrickyUnits {
 		void CreateList(std::string group, std::string List);
 		void Add(std::string group, std::string list, std::string value);
 		unsigned int ListCount(std::string group, std::string list);
-		std::vector<std::string> List(std::string group, std::string list);
+		std::vector<std::string> *List(std::string group, std::string list);
 		std::vector<std::string> EachList(std::string sect);
 		std::vector<std::string> EachValue(std::string sect);
 		std::vector<std::string> EachGroup();
