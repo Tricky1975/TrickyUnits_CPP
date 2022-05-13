@@ -57,7 +57,8 @@ namespace TrickyUnits {
 		time_t t;
 		char buff[256];		
 		time(&t);		
-		strftime(buff, 256, "%d %b %Y", &_localtime(&t));
+		auto loctime{ _localtime(&t) };
+		strftime(buff, 256, "%d %b %Y", &loctime);
 		//cout << "Out date\n";
 		return buff;
 	}
@@ -66,7 +67,9 @@ namespace TrickyUnits {
 		time_t t;
 		char buff[256];
 		time(&t);
-		strftime(buff, 256, "%H:%M:%S", &_localtime(&t));
+		//strftime(buff, 256, "%H:%M:%S", &_localtime(&t));
+ 		auto loctime{ _localtime(&t) };
+		strftime(buff, 256, "%d %b %Y", &loctime);
 		//cout << "Out Time\n";
 		return buff;
 	}
@@ -74,7 +77,9 @@ namespace TrickyUnits {
 		time_t t;
 		char buff[256];
 		time(&t);
-		strftime(buff, 256, f, &_localtime(&t));
+		//strftime(buff, 256, f, &_localtime(&t));
+		auto loctime{ _localtime(&t) };
+		strftime(buff, 256, "%d %b %Y", &loctime);
 		return buff;		
 	}
 
