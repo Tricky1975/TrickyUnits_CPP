@@ -96,6 +96,9 @@ namespace TrickyUnits {
 			if (line == "" || prefixed(line, "#")) {
 				// DO NOTHING!
 			}
+			else if (line[0] == '\\') {
+				line = right(line, line.size() - 1);
+			}
 			else if (inlist != "") {
 				if (Upper(line) == "*END")
 					inlist = "";
