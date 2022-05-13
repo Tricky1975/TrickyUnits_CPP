@@ -51,6 +51,7 @@ int ToInt(std::string s) {
 	s = Trim(s);
 	if (!s.size()) return 0;
 	auto r = right(s,s.size()-1);
+	if (s[s.size() - 1] == '-') return -((int)abs(ToInt(left(s, s.size() - 1))));
 	switch (s[0]) {
 		case '-':	return -TrueToInt(r,10);
 		case '$':
