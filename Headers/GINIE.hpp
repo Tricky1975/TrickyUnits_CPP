@@ -66,6 +66,8 @@ namespace TrickyUnits {
 		// Creates a new value, but only if it didn't already exist. If it does exist this instruction will simply be ignored. Handy for setting default values.
 		void NewValue(std::string group, std::string varname, std::string value);
 		void Value(std::string group, std::string varname, std::string value);
+		void Value(std::string group, std::string varname, int value);
+		bool HasValue(std::string group, std::string varname);
 		std::string Value(std::string group, std::string varname);
 		std::string UnParse();
 		void CreateList(std::string group, std::string List);
@@ -83,6 +85,7 @@ namespace TrickyUnits {
 		void ByteParse(char* b,bool merge=false);
 		void AutoParse(std::vector<char> b, bool merge = false);
 		void AutoParse(char* b, bool merge = false);
+		bool HasGroup(std::string group);
 	};
 
 }
