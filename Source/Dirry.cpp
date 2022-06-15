@@ -52,7 +52,7 @@ namespace TrickyUnits {
 			if ((!e1) && (!e2) && fuck && you) {
 				string H = fuck; H += you;
 				string D = fuck;
-				cout << "Addressing " << D << " to drive and " << H << " to home\n";
+				//cout << "Addressing " << D << " to drive and " << H << " to home\n";
 				DVar["HomeDrive"] = D; // string(fuck);
 				DVar["Home"] = TReplace(H, '\\', '/');
 			} else {

@@ -79,7 +79,7 @@ bool TrickyUnits::IsFile(std::string pth) {
     else
         return false;
 #else
-#pragma message("WARNING! IsFile is not yet supported by this platform! An empty vector will be returned in stead!")
+#pragma message("WARNING! IsFile is not yet supported by this platform! An false therefore will be returned in stead!")
     return false;
 #endif
 

@@ -25,6 +25,8 @@
 	#include <TargetConditionals.h>
 #endif
 
+
+
 namespace TrickyUnits{
 	std::string Platform(bool g) {
 		#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)

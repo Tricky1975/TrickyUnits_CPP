@@ -17,6 +17,7 @@
 // misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
+
 #include <GINIE.hpp>
 #include <QuickString.hpp>
 #include <QuickStream.hpp>
@@ -139,6 +140,12 @@ namespace TrickyUnits {
 	void GINIE::Value(string group, string varname, string value) {
 		Data[Upper(group)].Values[Upper(varname)] = value;
 		PerformAutoSave();
+	}
+	void GINIE::Value(string group, string varname, int value) { Value(group, varname, to_string(value)); }
+
+	bool GINIE::HasValue(std::string group, std::string varname) {
+		if (!Data.count(Upper(group))) return false;
+		return Data[Upper(group)].Values.count(Upper(varname));
 	}
 
 	void GINIE::NewValue(string group, string varname, string value) {
@@ -353,6 +360,10 @@ namespace TrickyUnits {
 		auto n = sizeof(src) / sizeof(src[0]);
 		std::vector<char> Buf(src, src + n);
 		AutoParse(Buf, merge);
+	}
+
+	bool GINIE::HasGroup(std::string group) {
+		return Data.count(Upper(group));
 	}
 
 

@@ -12,8 +12,8 @@ namespace TrickyUnits {
 	typedef unsigned int uint32;
 	
 	typedef long long int int64;
-	typedef unsigned long long int uing64;
+	typedef unsigned long long int uint64;
 	
-	typedef std::string str
+	typedef std::string str;
 	
 }

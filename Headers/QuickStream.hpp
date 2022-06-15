@@ -21,6 +21,7 @@
 #define INCLUDED_TRICKY_UNIT_QUICKSTREAM
 #include <string>
 #include <fstream>
+#include <QuickTypes.hpp>
 
 
 
@@ -38,6 +39,7 @@ namespace TrickyUnits {
 
 	bool MakeDir(std::string dir);
 	bool MakeDirC(const char* dir);
+	bool FileDelete(std::string file, bool noerrormsg = false);
 
 	std::ifstream::pos_type FileSize(std::string filename);
 
@@ -83,6 +85,42 @@ namespace TrickyUnits {
 
 		void Close();
 	};
+
+	class True_InFile;
+	typedef std::shared_ptr<True_InFile> InFile;
+	InFile ReadFile(std::string fname, int endian = 1);
+
+	class True_InFile {
+	private:
+		std::string FileName;
+		std::ifstream stream;
+		bool closed{ false };
+		int endian{ 1 }; // 0 = don't check! 1 = little endian! 2 = big endian!
+		int sysendian;
+		bool endmatch();
+		unsigned long long read{ 0 };
+		unsigned long long size{ 0 };
+	public:
+		uint64 Size();
+		True_InFile(std::string _filename, int endian = 1);
+		~True_InFile();
+		void Close();
+		char ReadChar();
+		byte ReadByte();
+		int32 ReadInt();
+		int16 ReadInt16();
+		int64 ReadLong();
+		uint32 ReadUInt();
+		uint16 ReadUInt16();
+		uint64 ReadUInt64();
+		std::string ReadString(int l = 0);
+		void ReadChars(char* c, int size = 0);
+		std::vector<char> ReadChars(int size);
+		void ReadCString(char* c);
+		std::string ReadCString();
+		bool EndOfFile();
+	};
+
 
 }
 #endif

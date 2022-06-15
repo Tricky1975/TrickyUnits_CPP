@@ -1,3 +1,4 @@
+
 // Lic:
 // Source/TRandom.cpp
 // Tricky's Random
@@ -17,6 +18,7 @@
 // misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
+
 #undef RDEBUG
 #include <stdlib.h> 
 #include <time.h> 
@@ -29,7 +31,14 @@ using namespace std;
 namespace TrickyUnits {
 
 	void TRandSeed(unsigned int seed) {
-		srand(seed || time(NULL));
+		if (seed == 0U)
+			TRandSeed(time(NULL));
+		else {
+			srand(seed);
+#ifdef RDEBUG
+			std::cout << "Seed set to " << seed << "\n";
+#endif
+		}
 	}
 
 	int TRand(unsigned int Max) {
@@ -38,7 +47,7 @@ namespace TrickyUnits {
 #ifdef RDEBUG
 			cout << "Auto-Seeding\n";
 #endif 
-			TRandSeed();
+			TRandSeed(time(NULL));
 		InitDone = true;
 		}
 		return rand() % (Max + 1);

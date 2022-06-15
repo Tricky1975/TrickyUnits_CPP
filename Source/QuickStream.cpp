@@ -40,6 +40,7 @@
 // Tricky's Units
 #include "../Headers/QuickString.hpp"
 #include "../Headers/QuickStream.hpp"
+#include "../Headers/QuickTypes.hpp"
 
 
 namespace TrickyUnits {
@@ -180,6 +181,17 @@ namespace TrickyUnits {
 		return MDIR(tmp) != 0;; //, S_IRWXU);		
 	}
 
+	bool FileDelete(std::string file, bool noerrormsg) {
+		auto er = remove(file.c_str());
+		if (er == 0) return true;
+		if (!noerrormsg) {
+			char err[300];
+			sprintf_s(err, "Deleting file failed (code: %04d)", er);
+			perror(err);
+		}
+		return false;
+	}
+
 	std::ifstream::pos_type FileSize(std::string filename) {
 		std::ifstream in(filename.c_str(), std::ifstream::ate | std::ifstream::binary);
 		return in.tellg();
@@ -187,6 +199,10 @@ namespace TrickyUnits {
 
 	OutFile WriteFile(string fname, int endian) {
 		return make_shared<True_OutFile>(fname,endian);
+	}
+
+	InFile ReadFile(std::string fname, int endian) {
+		return make_shared<True_InFile>(fname, endian);
 	}
 
 	
@@ -199,6 +215,8 @@ namespace TrickyUnits {
 		char c;
 		unsigned char uc;
 		int i;
+		int16 i16;
+		uint16 ui16;
 		unsigned int ui;
 		long long l;
 		unsigned long long ul;
@@ -206,8 +224,9 @@ namespace TrickyUnits {
 
 	bool True_OutFile::endmatch() {		return (!endian) || (endian==sysendian); }
 
+
 	True_OutFile::True_OutFile(std::string _filename, int _endian) {
-		stream = std::ofstream(_filename.c_str());
+		stream = std::ofstream(_filename.c_str(),std::ios::binary);
 		FileName = _filename;
 		// What endian type does the CPU have?
 		_ce ce; ce.i = 256;
@@ -263,5 +282,134 @@ namespace TrickyUnits {
 	TOFW(unsigned long long, ul);
 
 
-	
+#pragma region In File
+	True_InFile::~True_InFile() {
+		Close();
+	}
+	uint64 True_InFile::Size() {
+		return size;
+	}
+	True_InFile::True_InFile(std::string _filename, int endian) {
+		size = FileSize(_filename);
+		stream.open(_filename, std::ios::binary);
+		//stream = std::ifstream(_filename.c_str(), std::ifstream::ate | std::ifstream::binary);
+		_ce ce; ce.i = 256;
+		if (ce.ac[1]) sysendian = 1; else sysendian = 2;
+		//size = stream.tellg();
+		//cout << size << endl;
+	}
+
+	void True_InFile::Close() {
+		if (!closed) stream.close();
+	}
+	bool True_InFile::endmatch() { return (!endian) || (endian == sysendian); }
+
+	char True_InFile::ReadChar() {
+		char buff;
+		stream.read(&buff, 1);
+		//cout << read << "/" << size << "\tRead char " << (int)buff << "/" << buff << endl;
+		read++;
+		return buff;
+	}
+
+	byte True_InFile::ReadByte() {
+		_ce i;
+		i.c = ReadChar();
+		//cout << (int)i.c << endl; // debug only!
+		return i.uc;
+	}
+
+#define REND(mytype)\
+	_ce ce;\
+	if (endmatch())\
+		for (int i = 0; i < sizeof(mytype); ++i) ce.ac[i] = ReadChar();\
+	else\
+		for (int i = sizeof(mytype) - 1; i >= 0; --i) ce.ac[i] = ReadChar();
+
+	int32 True_InFile::ReadInt() {
+		REND(int32);
+		return ce.i;
+	}
+
+	int16 True_InFile::ReadInt16() {
+		REND(int16);
+		return (int16)ce.i16;
+	}
+
+	int64 True_InFile::ReadLong() {
+		REND(int64);
+		return ce.l;
+	}
+
+	uint32 True_InFile::ReadUInt() {
+		REND(uint32);
+		return ce.ui;
+	}
+
+	uint16 True_InFile::ReadUInt16() {
+		REND(uint16);
+		return ce.ui16;
+	}
+
+	uint64 True_InFile::ReadUInt64() {
+		REND(uint64);
+		return ce.ul;
+	}
+
+	string True_InFile::ReadString(int l) {
+		char* buf;
+		string ret;
+		int ln = l;
+		if (!ln) ln = ReadInt();
+		buf = new char[ln+1];
+		buf[ln] = 0;
+		for (int i = 0; i < ln; i++) buf[i] = ReadChar();
+		ret = buf;
+		delete []buf;
+		return ret;
+	}
+
+	void True_InFile::ReadChars(char* c, int size) {
+		int m = min<int>(sizeof(c), size);
+		for (auto i = 0; i < m; i++) c[i] = ReadChar();
+	}
+
+	std::vector<char> True_InFile::ReadChars(int size) {
+		std::vector<char>ret{};
+		for (int i = 0; i < size; i++) ret.push_back(ReadChar());
+		return ret;
+	}
+
+	void True_InFile::ReadCString(char* c) {
+		uint64 s = sizeof(c);
+		uint64 voorbij{ 0 };
+		uint64 i = 0;
+		char rc;
+		do {
+			rc = ReadChar();
+			if (i < s) c[i] = rc; else voorbij++;
+			i++;
+		} while (rc);
+		if (voorbij) {
+			cout << "ReadCString request went " << voorbij << " character(s) past the char* length (" << s << ")\n";
+		}
+	}
+
+	std::string True_InFile::ReadCString() {
+		string ret{};
+		char r;
+		do {
+			r = ReadChar();
+			if (!r) return ret;
+			ret += r;
+		} while (true);
+	}
+
+	bool True_InFile::EndOfFile() {
+		//return stream.eof();
+		return read >= size;
+
+	}
+
+#pragma endregion
 }
