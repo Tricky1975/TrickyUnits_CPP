@@ -19,7 +19,9 @@
 // EndLic
 #ifndef INCLUDED_TRICKY_UNIT_QUICKSTREAM
 #define INCLUDED_TRICKY_UNIT_QUICKSTREAM
+
 #include <string>
+#include <vector>
 #include <fstream>
 #include <QuickTypes.hpp>
 
