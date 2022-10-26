@@ -1,8 +1,8 @@
 // Lic:
 // Source/QuickStream.cpp
 // Quick Stream
-// version: 21.10.26
-// Copyright (C) 2020, 2021 Jeroen P. Broks
+// version: 22.10.26
+// Copyright (C) 2020, 2021, 2022 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -381,7 +381,7 @@ namespace TrickyUnits {
 	}
 
 	void True_InFile::ReadCString(char* c) {
-		uint64 s = sizeof(c);
+		uint64 s{ sizeof(c) };
 		uint64 voorbij{ 0 };
 		uint64 i = 0;
 		char rc;
@@ -393,6 +393,18 @@ namespace TrickyUnits {
 		if (voorbij) {
 			cout << "ReadCString request went " << voorbij << " character(s) past the char* length (" << s << ")\n";
 		}
+	}
+
+	void True_InFile::ReadCString(char* c, int size) {
+		bool nullfound{ false };
+		auto s{ sizeof(c) };
+		for (uint64 i = 0; i < size; i++) {
+			auto ch{ ReadChar() };
+			nullfound = nullfound || (!ch);
+			if (i < s) c[i] = ch;
+		}
+		if (size > s) printf("ReadCString(&0x%x,%d): Error! String is only %llu bytes long", (int)c, size, s);
+		if (!nullfound) printf("ReadCString(&0x%x,%d): There is no null-terminator found!", (int)c, size);
 	}
 
 	std::string True_InFile::ReadCString() {
