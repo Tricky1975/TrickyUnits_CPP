@@ -83,6 +83,8 @@ namespace TrickyUnits {
 		void Pink(std::string a);
 		void Dark(std::string a);
 		void Yellow(std::string a);
+		void Cyan(std::string a);
+		void Magenta(std::string a);
 
 		TmpPlateQCol(QColColor c, QColReset r,std::string n);
 	};
