@@ -1,8 +1,8 @@
 // Lic:
 // Headers/QuickStream.hpp
 // Quick Stream (header)
-// version: 21.10.26
-// Copyright (C) 2021 Jeroen P. Broks
+// version: 22.10.26
+// Copyright (C) 2021, 2022 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <QuickTypes.hpp>
+#include "QuickTypes.hpp"
 
 
 
@@ -82,6 +82,7 @@ namespace TrickyUnits {
 		void Write(std::vector<char> buf, bool storelength = false);
 
 		void WriteCString(const char* str);
+		
 
 		unsigned long long Size();
 
@@ -119,6 +120,7 @@ namespace TrickyUnits {
 		void ReadChars(char* c, int size = 0);
 		std::vector<char> ReadChars(int size);
 		void ReadCString(char* c);
+		void ReadCString(char* c, int size);
 		std::string ReadCString();
 		bool EndOfFile();
 	};
