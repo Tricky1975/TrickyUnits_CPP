@@ -1,8 +1,8 @@
 // Lic:
 // Headers/QuickString.hpp
 // Quick String (header)
-// version: 21.04.04
-// Copyright (C) 2021 Jeroen P. Broks
+// version: 22.10.26
+// Copyright (C) 2021, 2022 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -101,6 +101,16 @@ namespace TrickyUnits {
 	long long FindString(std::string Needle, std::string HayStack);
 
 	std::string Vec2Str(std::vector<char> input);
+
+	/// <summary>
+	/// A quick way to perform sprintf. 
+	/// 
+	/// NOTE: This is a simplefied version of the string.format() function in Lua and it may not have the full desirable support. For normal usage things should be okay, though
+	/// </summary>
+	/// <param name="fmt">format</param>
+	/// <param name="">arguments to be formatted</param>
+	/// <returns>The formatted string</returns>	
+	std::string TrSPrintF(const char* fmt, ...);
 }
 
 
