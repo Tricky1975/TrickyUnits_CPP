@@ -1,8 +1,8 @@
 // Lic:
 // Source/ArgParse.cpp
 // Argument Parser
-// version: 20.09.20
-// Copyright (C) 9, 2020 Jeroen P. Broks
+// version: 22.10.26
+// Copyright (C) 9, 2020, 2022 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -25,6 +25,7 @@
 
 // Tricky's Units
 #include <QuickString.hpp>
+#include <TrickySTOI.hpp>
 #include <ArgParse.h>
 
 using namespace std;
@@ -59,12 +60,21 @@ namespace TrickyUnits {
 			}
 			else if (expectflag != "") {
 				// TODO: flag parse out complete
-				_ParseArgReport = "Flag parsing not yet supported";
-				ret.arguments.clear();
-				ret.bool_flags.clear();
-				ret.string_flags.clear();
-				ret.int_flags.clear();
-				return ret;
+				//_ParseArgReport = "Flag parsing not yet supported";
+				//ret.arguments.clear();
+				//ret.bool_flags.clear();
+				//ret.string_flags.clear();
+				//ret.int_flags.clear();
+				//return ret;
+				if (CFG.flagtype[expectflag] == "STRING")
+					ret.string_flags[expectflag] = args[i];
+				else if (CFG.flagtype[expectflag]=="INT")
+					ret.int_flags[expectflag] = ToInt(args[i]);
+				else {
+					_ParseArgReport = "Unknown flag: " + expectflag;
+					return ret;
+				}
+				expectflag = "";
 			}
 			else if (prefixed(a, "-")) {
 				string flag = right(a, a.size() - 1);
@@ -72,12 +82,13 @@ namespace TrickyUnits {
 					ret.bool_flags[flag] = (CFG.defaultvalue[flag] == "FALSE");
 				} else {
 					// TODO: Proper flag parsing will be there later!
-					_ParseArgReport = "Flag parsing not yet supported";
-					ret.arguments.clear();
-					ret.bool_flags.clear();
-					ret.string_flags.clear();
-					ret.int_flags.clear();
-					return ret;
+					//_ParseArgReport = "Flag parsing not yet supported";
+					//ret.arguments.clear();
+					//ret.bool_flags.clear();
+					//ret.string_flags.clear();
+					//ret.int_flags.clear();
+					expectflag=flag;
+					//return ret;
 				}
 
 			}
