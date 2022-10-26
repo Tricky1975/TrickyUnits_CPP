@@ -1,8 +1,8 @@
 // Lic:
 // Source/TrickyMath.cpp
 // Tricky Math
-// version: 21.10.26
-// Copyright (C) 2021 Jeroen P. Broks
+// version: 22.10.26
+// Copyright (C) 2021, 2022 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -17,9 +17,18 @@
 // misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 // EndLic
+#include <math.h>
 #include "..\Headers\TrickyMath.hpp"
 namespace TrickyUnits {
 	int QMIN(int i, int j) { if (i < j) return i; return j; }
 	float QMIN(float i, float j) { if (i < j) return i; return j; }
 	int QMAX(int i, int j) { if (i > j) return i; return j; }
+
+
+	double DegSin(double i) { return (sin(i * (180 * pi))); }
+	double DegSin(int i) { return DegSin((double)i); }
+	double DegCos(double i) { return (cos(i * (180 * pi))); }
+	double DegCos(int i) { return DegCos((double)i); };
+
+
 }
