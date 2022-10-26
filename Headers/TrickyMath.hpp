@@ -1,8 +1,8 @@
 // Lic:
 // Headers/TrickyMath.hpp
 // Tricky Math (header)
-// version: 21.10.26
-// Copyright (C) 2021 Jeroen P. Broks
+// version: 22.10.26
+// Copyright (C) 2021, 2022 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -23,4 +23,13 @@ namespace TrickyUnits {
 	int QMIN(int i, int j);
 	float QMIN(float i, float j);
 	int QMAX(int i, int j);
+
+	const double pi{ 3.14159265359 };
+
+
+	double DegSin(double i);
+	double DegSin(int i);
+	double DegCos(double i);
+	double DegCos(int i);
+
 }
