@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <memory>
 
-#include <minmax.h>
+//#include <minmax.h>
+#include <algorithm>
 
 namespace TrickyUnits {
 
@@ -16,7 +17,8 @@ namespace TrickyUnits {
 	/// <typeparam name="mytype"></typeparam>
 	template <class mytype> class Array2D {
 	private:
-		mytype* _array;
+		mytype* _array{ nullptr };
+		//std::shared_ptr<mytype[]>_array{ nullptr };
 		int	_Dim1, _Dim2;
 		bool _autoclean;
 		bool _panicked{ false };
@@ -29,6 +31,8 @@ namespace TrickyUnits {
 		/// <param name="d1">Dimension 1</param>
 		/// <param name="d2">Dimension 2</param>
 		Array2D(int d1, int d2);
+
+		Array2D();
 
 		~Array2D();
 
@@ -48,6 +52,8 @@ namespace TrickyUnits {
 		/// <returns></returns>
 		mytype Value(int d1, int d2);
 
+		void SetAll(mytype v);
+
 		/// <summary>
 		/// Creates a shared pointer. Please note when using this you don't need to dispose the data after use. This will then be done automatically.
 		/// </summary>
@@ -61,7 +67,7 @@ namespace TrickyUnits {
 		/// </summary>
 		/// <param name="D1">1st dimension</param>
 		/// <param name="D2">2nd dimension</param>
-		void ReDim(int D1, int D2);
+		void ReDim(int D1, int D2,bool keepdata=false);
 
 		/// <summary>
 		/// Disposes array. If you created a shared pointer with the Dim function, you won't need to do this.
@@ -83,9 +89,17 @@ namespace TrickyUnits {
 	};
 
 	template<class mytype> inline Array2D<mytype>::Array2D(int d1, int d2) {
+		//_array = std::make_shared<mytype[]>(new mytype[d1 * d2]);
 		_array = new mytype[d1 * d2];
 		_Dim1 = d1;
 		_Dim2 = d2;
+	}
+
+	template<class mytype> inline Array2D<mytype>::Array2D() {
+		//_array = std::make_shared<mytype[]>( new mytype[100]);
+		_array = new mytype[100];
+		_Dim1 = 10;
+		_Dim2 = 10;
 	}
 
 	template<class mytype> inline Array2D<mytype>::~Array2D() {
@@ -102,19 +116,29 @@ namespace TrickyUnits {
 		return _array[idx(d1, d2)];
 	}
 
+	template<class mytype> inline void Array2D<mytype>::SetAll(mytype v) {
+		auto mx{ _Dim1 * _Dim2 };
+		for (auto i = 0; i < mx; i++) _array[i] = v;
+	}
+
 	template<class mytype> inline std::shared_ptr<Array2D<mytype>> Array2D<mytype>::Dim(int D1, int D2) {
 		auto ret{ std::make_shared<Array2D<mytype>>(D1,D2) };
 		ret->_autoclean = true;
 		return ret;
 	}
 
-	template<class mytype> inline void Array2D<mytype>::ReDim(int D1, int D2) {
+	template<class mytype> inline void Array2D<mytype>::ReDim(int D1, int D2,bool keepdata) {
 		auto newarray{ new mytype[D1 * D2] };
-		for (int i2 = 0; i2 < D2; ++i2) for (int i1 = 0; i1 < D1; ++i1) {
-			if (i1 < min(D1, _Dim1) && i2 < min(D2, _Dim2))
-				newarray[i1 + (i2 * D1)] = _array[idx(i1, i2)];
+		//std::shared_ptr<mytype[]> newarray ( new mytype[D1 * D2] );
+		if (keepdata) {
+			for (int i2 = 0; i2 < D2; ++i2) for (int i1 = 0; i1 < D1; ++i1) {
+				if (i1 < std::min(D1, _Dim1) && i2 < std::min(D2, _Dim2))
+					newarray[i1 + (i2 * D1)] = _array[idx(i1, i2)];
+			}
 		}
-		delete[] _array;
+		//if (_array) {
+		//delete[] _array;
+		//} else { std::cout << "WARNING! Redim, but old array was null pointed!\n"; }
 		_Dim1 = D1;
 		_Dim2 = D2;
 		_array = newarray;
