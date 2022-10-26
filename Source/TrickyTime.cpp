@@ -1,8 +1,8 @@
 // Lic:
 // Source/TrickyTime.cpp
 // TrickyTime
-// version: 21.10.31
-// Copyright (C) 2021 Jeroen P. Broks
+// version: 22.10.26
+// Copyright (C) 2021, 2022 Jeroen P. Broks
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
 // arising from the use of this software.
@@ -68,8 +68,8 @@ namespace TrickyUnits {
 		char buff[256];
 		time(&t);
 		//strftime(buff, 256, "%H:%M:%S", &_localtime(&t));
- 		auto loctime{ _localtime(&t) };
-		strftime(buff, 256, "%d %b %Y", &loctime);
+		auto loctime{ _localtime(&t) };
+		strftime(buff, 256, "%H:%M:%S" , &loctime);
 		//cout << "Out Time\n";
 		return buff;
 	}
