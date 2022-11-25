@@ -24,9 +24,9 @@
 #include <map>
 
 // Tricky's Units
-#include <QuickString.hpp>
-#include <TrickySTOI.hpp>
-#include <ArgParse.h>
+#include "../Headers/QuickString.hpp"
+#include "../Headers/TrickySTOI.hpp"
+#include "../Headers/ArgParse.h"
 
 using namespace std;
 
