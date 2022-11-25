@@ -134,6 +134,7 @@ namespace TrickyUnits {
 		unsigned p = 1;
 		while (p <= olen) {
 			if ((p - 1) + slen <= olen && mid(mystr, p, slen) == ori) {
+				//cout << p << "\t" << ori << "\t" << subst << "\t" << mystr << "\t" << ret << endl; // debug only
 				ret += subst;
 				p += slen;
 				//cout << p << ":"<<olen<<endl;
@@ -459,9 +460,12 @@ namespace TrickyUnits {
 				case 's': {
 					const char* s{ va_arg(args,char*) }; //= luaL_tolstring(L, arg, &l);
 					size_t l{ strlen(s) };					
-					if (form[2] == '\0')  /* no modifiers? */
+					if (form[2] == '\0') { /* no modifiers? */
 						//luaL_addvalue(&b);  /* keep entire string */
-						strcpy_s(addret, s);
+						std::string s2; s2 = string(s);
+						strcpy_s(addret, s2.c_str());
+						//strcpy_s(addret, s);
+					}
 					else {
 						//luaL_argcheck(L, l == strlen(s), arg, "string contains zeros");
 						if (l != strlen(s)) {
