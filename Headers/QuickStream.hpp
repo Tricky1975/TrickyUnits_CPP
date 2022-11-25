@@ -43,7 +43,11 @@ namespace TrickyUnits {
 	bool MakeDirC(const char* dir);
 	bool FileDelete(std::string file, bool noerrormsg = false);
 
+	std::string CurrentDir();
+	void ChangeDir(std::string dir);
+
 	std::ifstream::pos_type FileSize(std::string filename);
+	std::string FileDate(std::string FileName);
 
 
 	class True_OutFile;

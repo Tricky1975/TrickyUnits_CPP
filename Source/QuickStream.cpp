@@ -41,6 +41,7 @@
 #include "../Headers/QuickString.hpp"
 #include "../Headers/QuickStream.hpp"
 #include "../Headers/QuickTypes.hpp"
+#include "../Headers/TrickyTime.hpp"
 
 
 namespace TrickyUnits {
@@ -192,9 +193,38 @@ namespace TrickyUnits {
 		return false;
 	}
 
+	std::string CurrentDir() {
+		char* cwd = _getcwd(0, 0); // **** microsoft specific ****
+		std::string working_directory{ TReplace(cwd,'\\','/') };
+		std::free(cwd);
+		return working_directory;
+
+	}
+
+	void ChangeDir(std::string dir) {
+#ifdef _WIN32
+		_chdir(dir.c_str());
+#else
+		chdir(dir.c_str());
+#endif
+	}
+
 	std::ifstream::pos_type FileSize(std::string filename) {
 		std::ifstream in(filename.c_str(), std::ifstream::ate | std::ifstream::binary);
 		return in.tellg();
+	}
+
+	std::string FileDate(std::string FileName) {
+		struct stat st;  // declaration of the stat
+		struct tm tm; //declaration of tm pointer
+
+		char filename1[500]; strcpy_s(filename1, FileName.c_str());
+		char datestring[256];
+		stat(filename1, &st);
+		tm = _localtime(&st.st_mtime);
+		strftime(datestring, sizeof(datestring), "%m-%d-%Y %H.%M.%S", &tm);
+		std::string ret{ datestring };
+		return TReplace(ret,'.',':');
 	}
 
 	OutFile WriteFile(string fname, int endian) {
