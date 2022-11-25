@@ -21,6 +21,16 @@
 #include <string>
 namespace TrickyUnits {
 
+	/// <summary>
+	/// Contains the last error that occurred during a string to integer conversion. When there were no errors, this variable contains an empty string.
+	/// </summary>
+	extern std::string STOI_Error;
+
+	/// <summary>
+	/// Converts a string to integer. Unlike std::stoi no error will be thrown if something goes wrong. STOI_Error will contain an error if something goes wrong, though.
+	/// </summary>
+	/// <param name="s">The string</param>
+	/// <returns>The integer generated. (0 if something goes wrong. Check STOI_Error if that happens).</returns>
 	int ToInt(std::string s);
 	unsigned int ToUInt(std::string s);
 
