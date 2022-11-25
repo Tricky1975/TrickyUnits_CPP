@@ -25,58 +25,65 @@
 #include "../Headers/QuickString.hpp"
 #include <math.h>
 
+#define eReturn(ErrMsg,retvalue) {STOI_Error = ErrMsg; return retvalue;}
+
 namespace TrickyUnits {
-int TrueToInt(std::string str,int scale) {
-	if (!str.size()) return 0;
-	if (scale>16 || scale<2) return 0; // Invalid scale	
-	int l = str.size()-1;
-	auto s = Upper(str);
-	int ret{0};
-	for (int p=0;p<=l;++p){
-		int digi{0};
-		auto ch=s[l-p];
-		if (ch>='0' && ch<='9') digi=(int)ch-48;
-		else if (ch>='A' && ch<='F') digi=(int)ch-55;
-		if (digi>=scale) return 0;
-		if (p==0)
-			ret = digi;
-		else
-			ret += digi * (pow(scale,p));
-	}
-	return ret;
-}
 
-int ToInt(std::string s) {
-	if (!s.size()) return 0;
-	s = Trim(s);
-	if (!s.size()) return 0;
-	auto r = right(s,s.size()-1);
-	if (s[s.size() - 1] == '-') return -((int)abs(ToInt(left(s, s.size() - 1))));
-	switch (s[0]) {
-		case '-':	return -TrueToInt(r,10);
+	std::string STOI_Error{ "" };
+
+	int TrueToInt(std::string str, int scale) {
+		STOI_Error = "";
+		if (!str.size()) eReturn("No string to convert", 0);
+		if (scale > 16 || scale < 2) eReturn("Invalid Scale", 0); // Invalid scale	
+		int l = str.size() - 1;
+		auto s = Upper(str);
+		int ret{ 0 };
+		for (int p = 0; p <= l; ++p) {
+			int digi{ 0 };
+			auto ch = s[l - p];
+			if (ch >= '0' && ch <= '9') digi = (int)ch - 48;
+			else if (ch >= 'A' && ch <= 'F') digi = (int)ch - 55;
+			else eReturn(std::string("Character '") + ch + "' not recognized in string to integer conversion!", 0);
+			if (digi >= scale) eReturn(std::string("Digit ") + std::to_string(digi) + std::string(" beyond scale (") + std::to_string(scale) + ")", 0);
+			if (p == 0)
+				ret = digi;
+			else
+				ret += digi * (pow(scale, p));
+		}
+		eReturn("", ret);
+	}
+
+	int ToInt(std::string s) {
+		if (!s.size()) return 0;
+		s = Trim(s);
+		if (!s.size()) return 0;
+		auto r = right(s, s.size() - 1);
+		if (s[s.size() - 1] == '-') return -((int)abs(ToInt(left(s, s.size() - 1))));
+		switch (s[0]) {
+		case '-':	return -TrueToInt(r, 10);
 		case '$':
-		case 'x':	return TrueToInt(r,16);
+		case 'x':	return TrueToInt(r, 16);
 		case '%':
-		case 'b':	return TrueToInt(r,2);
-		case 'o':	return TrueToInt(r,8);
-		default:	return TrueToInt(s,10);
+		case 'b':	return TrueToInt(r, 2);
+		case 'o':	return TrueToInt(r, 8);
+		default:	return TrueToInt(s, 10);
+		}
 	}
-}
 
-unsigned int ToUInt(std::string s){
-	if (!s.size()) return 0;
-	s = Trim(s);
-	if (!s.size()) return 0;
-	auto r = right(s, s.size() - 1);
-	switch (s[0]) {
-	case '$':
-	case 'x':	return (unsigned int)TrueToInt(r, 16);
-	case '%':
-	case 'b':	return (unsigned int)TrueToInt(r, 2);
-	case 'o':	return (unsigned int)TrueToInt(r, 8);
-	default:	return (unsigned int)TrueToInt(s, 10);
+	unsigned int ToUInt(std::string s) {
+		if (!s.size()) return 0;
+		s = Trim(s);
+		if (!s.size()) return 0;
+		auto r = right(s, s.size() - 1);
+		switch (s[0]) {
+		case '$':
+		case 'x':	return (unsigned int)TrueToInt(r, 16);
+		case '%':
+		case 'b':	return (unsigned int)TrueToInt(r, 2);
+		case 'o':	return (unsigned int)TrueToInt(r, 8);
+		default:	return (unsigned int)TrueToInt(s, 10);
+		}
 	}
-}
 
 
 
