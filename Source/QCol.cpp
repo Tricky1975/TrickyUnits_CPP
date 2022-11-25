@@ -129,6 +129,7 @@ namespace TrickyUnits{
 	void TmpPlateQCol::Dark(string a) { Write(qColor::DarkGrey, a); }
 	void TmpPlateQCol::Yellow(string a) { Write(qColor::Yellow, a); }
 	void TmpPlateQCol::Cyan(string a) { Write(qColor::Cyan, a); }
+	void TmpPlateQCol::LCyan(string a) { Write(qColor::LightCyan, a); }
 	void TmpPlateQCol::Magenta(string a) { Write(qColor::Magenta, a); }
 
 	TmpPlateQCol::TmpPlateQCol(QColColor c, QColReset r,string n) {
