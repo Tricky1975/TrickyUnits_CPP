@@ -76,6 +76,7 @@ namespace TrickyUnits {
 		void Doing(std::string a, int b, std::string ending = "\n");
 		void Write(qColor c, std::string w);
 		void Error(std::string msg);
+		void Warn(std::string msg);
 
 		void Green(std::string a);
 		void LGreen(std::string a);

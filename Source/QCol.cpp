@@ -121,6 +121,11 @@ namespace TrickyUnits{
 		Write(Error2, msg);
 		cout << endl;
 	}
+	void TmpPlateQCol::Warn(string msg) {
+		Write(Error1, "WARNING> ");
+		Write(Error2, msg);
+		cout << endl;
+	}
 
 	void TmpPlateQCol::Green(string a) { Write(qColor::Green, a); }
 	void TmpPlateQCol::LGreen(string a) { Write(qColor::LightGreen, a); }
