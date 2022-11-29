@@ -142,7 +142,11 @@ namespace TrickyUnits {
 	}
 
 	void GINIE::Value(string group, string varname, string value) {
-		Data[Upper(group)].Values[Upper(varname)] = value;
+		if (Data[Upper(group)].Values[Upper(varname)] == value) return; // Done to prevent autosaving when we don't need to!
+		if (value == "")
+			Data[Upper(group)].Values.erase(Upper(varname)); // Empty fields are NOT required!
+		else
+			Data[Upper(group)].Values[Upper(varname)] = value;
 		PerformAutoSave();
 	}
 	void GINIE::Value(string group, string varname, int value) { Value(group, varname, to_string(value)); }
@@ -156,6 +160,11 @@ namespace TrickyUnits {
 		if (Data[Upper(group)].Values.count(Upper(varname))) return;
 		Data[Upper(group)].Values[Upper(varname)] = value;
 		PerformAutoSave();
+	}
+
+	std::string GINIE::GetNewValue(std::string group, std::string varname, std::string value) {
+		NewValue(group, varname, value);
+		return Value(group, varname);
 	}
 
 	string GINIE::Value(string group, string varname)

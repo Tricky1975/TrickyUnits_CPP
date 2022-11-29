@@ -65,6 +65,8 @@ namespace TrickyUnits {
 		void Parse(std::string source, bool merge = false);
 		// Creates a new value, but only if it didn't already exist. If it does exist this instruction will simply be ignored. Handy for setting default values.
 		void NewValue(std::string group, std::string varname, std::string value);
+		// Creates a new value, but only if it didn't already exist and returns the new or existing value
+		std::string GetNewValue(std::string group, std::string varname, std::string value);
 		void Value(std::string group, std::string varname, std::string value);
 		void Value(std::string group, std::string varname, int value);
 		bool HasValue(std::string group, std::string varname);
