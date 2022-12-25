@@ -1,3 +1,7 @@
+# NOTE!
+
+Most of these units have been either moved or been rewritten from scratch for the [Slyvina project](https://github.com/Slyvina), and have henceforth been deprecated. They will from now on only be maintained because some projects of mine that are still in active use rely on those. If these have either been discontinued or been adapted/recreated for Slyvina, these units will also be discontinued. No new projects are planned for these units anymore.
+
 # TrickyUnits for C++
 
 This is just a collection of the quick "Units" I've set up for my work in C++. Please note, I've set everything with the use of Visual Studio 2019 in mind. That being said it is also possible that some references exist to libraries 
