@@ -294,7 +294,7 @@ namespace TrickyUnits {
 	void CharPoints::UnForce() {
 		// _have = max(min(_have, _maximum), _minimum);  // ? Ignored?
 		//Paniek("UNFORCE!!!");; // Force an error to guarantee me this function is called at all!
-		if (_minimum > _maximum) { Paniek("Points Unforce error! Maximum lower than minumum"); }
+		if (_minimum > _maximum) { Paniek(string("Points Unforce error! Maximum lower than minumum ("+to_string(_minimum)+">"+to_string(_maximum)+")")); }
 		if (_have > _maximum) { Chat("Have:" << _have << " greater than max:" << _maximum << "\tCorrecting!"); _have = _maximum; }
 		if (_have < _minimum) { Chat("Have:" << _have << " lower   than min:" << _minimum << "\tCorrecting!"); _have = _minimum; }
 	
